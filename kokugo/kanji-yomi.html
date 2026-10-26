@@ -322,7 +322,7 @@
       return `<section class="sheet ${state.fold ? "" : "no-fold"}">
         <div class="sheet-header">
           <div class="sheet-title-wrap">
-            <div class="sheet-title">かんじ よみ ${u.grade}年 ${circled(u.no)}</div>
+            <div class="sheet-title">かんじ よみ ${circled(u.no)}</div>
             <span class="sheet-step-badge">${info.badge}（${info.sub}）</span>
             <span class="sheet-page-num">${pageLabel || ""}</span>
           </div>
@@ -331,7 +331,7 @@
         <div class="guide">${info.guide}</div>
         <div class="kanji-strip">${strip}</div>
         <div class="rows">${rows}</div>
-        <div class="foot"><span>ゆっくり・すっきり かんじ よみプリント</span><span>${u.grade}年 配当漢字 ${circled(u.no)}</span></div>
+        <div class="foot"><span>ゆっくり・すっきり かんじ よみプリント</span><span>かんじ よみ ${circled(u.no)}</span></div>
       </section>`;
     }
 
