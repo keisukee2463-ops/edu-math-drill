@@ -86,7 +86,7 @@
     /* 今日の漢字 */
     .kanji-strip { display: flex; gap: 8px; margin-bottom: 8px; }
     .kbox { flex: 1; border: 1.2px solid var(--ink); border-radius: 6px; text-align: center; padding: 3px 2px 4px; }
-    .kbox .kk { font-size: 1.9rem; line-height: 1.1; font-weight: 700; }
+    .kbox .kk { font-size: 1.7rem; line-height: 1.05; font-weight: 700; }
     .kbox .kr { font-size: 0.66rem; color: var(--text-sub); line-height: 1.3; min-height: 1.3em; }
 
     /* 行（問題＋こたえ欄）*/
@@ -99,12 +99,19 @@
     .ans-cell.head { font-size: 0.68rem; color: #71717a; align-items: flex-end; }
     .sec-title { font-size: 0.92rem; font-weight: 700; padding: 5px 0 3px; }
     .sec-title span { font-size: 0.74rem; font-weight: 600; color: var(--text-sub); margin-left: 6px; }
-    .item { display: flex; align-items: center; gap: 8px; padding: 0.8mm 0 0.6mm; border-bottom: 1px dotted #d4d4d8; min-height: 10mm; }
+    .item { display: flex; align-items: center; gap: 8px; padding: 1mm 3mm 1mm 0; border-bottom: 1px dotted #d4d4d8; min-height: 12.4mm; }
     .item .no { width: 1.6em; font-size: 0.86rem; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
-    .item .txt { font-size: 1.45rem; line-height: 1.75; color: var(--ink); flex: 1; letter-spacing: 0.04em; }
-    .item.sent .txt { font-size: 1.3rem; }
-    .item .choice { font-size: 0.92rem; color: var(--text-sub); white-space: nowrap; }
-    .item .chk { width: 5mm; height: 5mm; border: 1.2px solid var(--ink); border-radius: 50%; flex-shrink: 0; margin-right: 2mm; }
+    .item .txt { font-size: 1.6rem; line-height: 1.7; color: var(--ink); width: 46mm; flex-shrink: 0; letter-spacing: 0.06em; }
+    .item.sent .txt { font-size: 1.22rem; width: auto; flex: 1; letter-spacing: 0.02em; }
+    .item .arrow { color: #a1a1aa; font-size: 0.85rem; flex-shrink: 0; }
+    /* 読みを書くマス（1マス1文字） */
+    .cells { display: flex; flex-shrink: 0; }
+    .cell { width: 10.5mm; height: 10.5mm; border: 1.3px solid #52525b; margin-left: -1.3px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.35rem; color: #c4c4cc; background: #fff; }
+    .cell:first-child { margin-left: 0; }
+    .freebox { height: 10.5mm; border: 1.3px solid #52525b; flex-shrink: 0; background: #fff; }
+    .item.sent .cell { width: 9.5mm; height: 9.5mm; font-size: 1.2rem; }
+    .item.sent .freebox { height: 9.5mm; }
     .rei-badge { border: 1.2px solid var(--ink); border-radius: 4px; padding: 0 6px; font-size: 0.68rem; flex-shrink: 0; }
     ruby rt { font-size: 0.5em; letter-spacing: 0; color: var(--ink); }
     ruby rt.hide { visibility: hidden; }
@@ -178,9 +185,9 @@
           <div class="current-unit-name" id="currentUnitName"></div>
         </div>
         <div class="step-pills">
-          <button class="step-pill active" id="pill-step1" onclick="setStep('step1')">ステップ1<span class="pill-sub">（ふりがなあり）</span></button>
-          <button class="step-pill" id="pill-step2" onclick="setStep('step2')">ステップ2<span class="pill-sub">（えらんで読む）</span></button>
-          <button class="step-pill" id="pill-step3" onclick="setStep('step3')">ステップ3<span class="pill-sub">（ふりがななし）</span></button>
+          <button class="step-pill active" id="pill-step1" onclick="setStep('step1')">ステップ1<span class="pill-sub">（なぞって書く）</span></button>
+          <button class="step-pill" id="pill-step2" onclick="setStep('step2')">ステップ2<span class="pill-sub">（はじめの1字ヒント）</span></button>
+          <button class="step-pill" id="pill-step3" onclick="setStep('step3')">ステップ3<span class="pill-sub">（じぶんで書く）</span></button>
           <button class="step-pill" id="pill-all" onclick="setStep('all')">全ステップ<span class="pill-sub">（1〜3一括）</span></button>
         </div>
         <div class="toolbar-actions">
@@ -199,9 +206,9 @@
   <script src="kanji3-data.js"></script>
   <script>
     const STEP_INFO = {
-      step1: { badge: "ステップ1", sub: "ふりがなあり", guide: "ふりがなを たよりに、こえに だして よんでみよう。よめたら ○に ✓を つけよう。" },
-      step2: { badge: "ステップ2", sub: "えらんで読む", guide: "ふりがなは ないよ。（　）の 2つから よみを えらんで ○を つけて、よんでみよう。" },
-      step3: { badge: "ステップ3", sub: "ふりがななし", guide: "ふりがなは ないよ。じぶんの ちからで よんでみよう。よめたら ○に ✓を つけよう。" }
+      step1: { badge: "ステップ1", sub: "なぞって書く", guide: "こえに だして よみながら、マスの うすい じを なぞろう。おわったら みぎを ひらいて こたえあわせ。" },
+      step2: { badge: "ステップ2", sub: "はじめの1字ヒント", guide: "はじめの 1じだけ ヒントが あるよ。のこりの よみを マスに かこう。" },
+      step3: { badge: "ステップ3", sub: "じぶんで書く", guide: "よみを ひらがなで □に かこう。おわったら みぎを ひらいて こたえあわせ。" }
     };
     let state = { unit: KANJI_UNITS[0].id, level: "step1", seed: 1, fold: true };
 
@@ -226,10 +233,13 @@
       let html = "", i = 0;
       while (i < nodes.length) {
         if (nodes[i].t === "x") { html += esc(nodes[i].text); i++; continue; }
-        let j = i, run = "", isTarget = false;
+        let j = i, run = "", isTarget = false, end = i;
+        while (end < nodes.length && nodes[end].t === "r") end++;
+        const groupT = nodes.slice(i, end).some(n => [...n.k].some(c => unitKanji.includes(c)));
         while (j < nodes.length && nodes[j].t === "r") {
           const n = nodes[j];
-          const show = level === "step1" || n.always;
+          const isT = [...n.k].some(c => unitKanji.includes(c));
+          const show = n.always || (underline && !groupT);
           run += `<ruby>${esc(n.k)}<rt class="${show ? "" : "hide"}">${esc(n.r)}</rt></ruby>`;
           if ([...n.k].some(c => unitKanji.includes(c))) isTarget = true;
           j++;
@@ -251,10 +261,10 @@
           if ([...nodes[j].k].some(c => unitKanji.includes(c))) isTarget = true;
           j++;
         }
-        if (isTarget) out.push(`${k}→${r}`);
+        if (isTarget) out.push({ k, r });
         i = j;
       }
-      return out.join("、");
+      return out;
     }
 
     /* ---------- 乱数（シード固定で入れかえ） ---------- */
@@ -269,6 +279,15 @@
 
     /* ---------- シート組み立て ---------- */
     function getUnit(id) { return KANJI_UNITS.find(u => u.id === id) || KANJI_UNITS[0]; }
+    /* 読みを書くマス: step1=全部なぞり / step2=1字目だけなぞり / step3=マス目なしの□ */
+    function cellsHTML(reading, level) {
+      const ch = [...reading];
+      if (level === "step3") return `<div class="freebox" style="width:${Math.max(ch.length + 1, 4) * 10}mm"></div>`;
+      return `<div class="cells">` + ch.map((c, i) => {
+        const t = level === "step1" || i === 0 ? esc(c) : "";
+        return `<div class="cell">${t}</div>`;
+      }).join("") + `</div>`;
+    }
     function circled(n) { return "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳"[n - 1] || String(n); }
 
     function buildSheet(unitId, level, pageLabel) {
@@ -284,23 +303,20 @@
       }).join("");
 
       let n = 0, rows = "";
-      rows += `<div class="row"><div class="sec-title">1 じゅくごを よもう<span>（${W.length}もん）</span></div><div class="ans-cell head">こたえ ←ここで おる</div></div>`;
+      rows += `<div class="row"><div class="sec-title">1 じゅくごの よみを かこう<span>（${W.length}もん）</span></div><div class="ans-cell head">こたえ ←ここで おる</div></div>`;
       W.forEach((w, idx) => {
         n++;
-        let choice = "";
-        if (level === "step2") {
-          const right = readingOf(w.w), pair = (idx % 2 === 0) ? [right, w.d] : [w.d, right];
-          choice = `<span class="choice">（ ${esc(pair[0])} ・ ${esc(pair[1])} ）</span>`;
-        }
-        const rei = (idx === 0 && level === "step1") ? `<span class="rei-badge">れい</span>` : "";
-        rows += `<div class="row"><div class="item"><span class="no">${n}</span><span class="txt">${renderText(w.w, level, uk, false)}</span>${rei}${choice}<span class="chk"></span></div>` +
-                `<div class="ans-cell">${esc(readingOf(w.w))}</div></div>`;
+        const r = readingOf(w.w);
+        rows += `<div class="row"><div class="item"><span class="no">${n}</span><span class="txt">${renderText(w.w, level, uk, false)}</span>` +
+                `<span class="arrow">▶</span>${cellsHTML(r, level)}</div><div class="ans-cell">${esc(r)}</div></div>`;
       });
-      rows += `<div class="row"><div class="sec-title">2 ぶんの なかで よもう<span>（せんを ひいた ことばに ちゅうい）</span></div><div class="ans-cell"></div></div>`;
+      rows += `<div class="row"><div class="sec-title">2 ぶんの なかで よもう<span>（せんの ことばの よみを マスに かこう）</span></div><div class="ans-cell"></div></div>`;
       S.forEach(s => {
         n++;
-        rows += `<div class="row"><div class="item sent"><span class="no">${n}</span><span class="txt">${renderText(s, level, uk, true)}</span><span class="chk"></span></div>` +
-                `<div class="ans-cell">${esc(targetAnswers(s, uk))}</div></div>`;
+        const ts = targetAnswers(s, uk);
+        rows += `<div class="row"><div class="item sent"><span class="no">${n}</span><span class="txt">${renderText(s, level, uk, true)}</span>` +
+                `<span class="arrow">▶</span>${ts.map(t => cellsHTML(t.r, level)).join("")}</div>` +
+                `<div class="ans-cell">${ts.map(t => esc(t.k + "→" + t.r)).join("、")}</div></div>`;
       });
 
       return `<section class="sheet ${state.fold ? "" : "no-fold"}">
