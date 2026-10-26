@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ゆっくり・すっきり かんじ よみプリント（3年）</title>
+  <style>
+    :root {
+      --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
+      --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
+      --border-soft: #e7e5e4; --border-mid: #d6d3d1;
+      --accent: #2c5e4f; --accent-soft: #eaf2ef; --ink: #18181b; --ans-red: #c2410c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--bg-app); color: var(--text-main);
+      display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ====== サイドバー（算数ページと同じ見た目） ====== */
+    .sidebar { width: 300px; background: var(--bg-panel); border-right: 1px solid var(--border-soft);
+      display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; overflow-y: auto; }
+    .brand-box { padding: 20px 18px 16px; border-bottom: 1px solid var(--border-soft); }
+    .subject-switch { display: flex; gap: 4px; margin-bottom: 12px; }
+    .subject-switch a { flex: 1; text-align: center; text-decoration: none; font-size: 0.78rem; font-weight: 700;
+      padding: 6px 0; border-radius: 6px; color: var(--text-sub); background: var(--bg-subtle); }
+    .subject-switch a.active { background: var(--text-main); color: #fff; }
+    .brand-kicker { font-size: 0.68rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .brand-main { font-size: 1.02rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1.35; }
+    .brand-count { font-size: 0.72rem; color: var(--text-sub); margin-top: 4px; font-weight: 600; }
+    .brand-note { font-size: 0.68rem; color: var(--text-sub); line-height: 1.55; margin-top: 10px; padding: 8px 10px;
+      background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; }
+    .brand-note p + p { margin-top: 4px; }
+    .unit-list { padding: 14px 12px 32px; display: flex; flex-direction: column; gap: 18px; flex: 1; }
+    .cat-group-title { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: 0.05em;
+      margin-bottom: 6px; padding-left: 6px; border-left: 3px solid var(--accent); }
+    .unit-btn { width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 7px;
+      padding: 7px 9px; margin-bottom: 2px; cursor: pointer; display: flex; align-items: flex-start; gap: 7px; font-family: inherit; }
+    .unit-btn:hover { background: #fafaf9; border-color: var(--border-soft); }
+    .unit-btn.active { background: var(--accent-soft); border-color: #b7d4cb; }
+    .unit-grade-tag { font-size: 0.64rem; font-weight: 700; padding: 2px 5px; border-radius: 4px;
+      background: var(--bg-subtle); color: var(--text-sub); white-space: nowrap; margin-top: 1px; }
+    .unit-btn.active .unit-grade-tag { background: var(--accent); color: #fff; }
+    .unit-name { font-size: 0.8rem; font-weight: 700; line-height: 1.35; }
+    .coming { font-size: 0.72rem; color: var(--text-muted); padding: 4px 8px; }
+
+    /* ====== メイン・ツールバー ====== */
+    .main-area { margin-left: 300px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .top-toolbar { background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border-soft);
+      padding: 12px 28px; position: sticky; top: 0; z-index: 30; }
+    .toolbar-inner { max-width: 940px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 12px; }
+    .step-pills { display: inline-flex; background: var(--bg-subtle); padding: 3px; border-radius: 8px; gap: 2px; }
+    .step-pill { border: none; background: transparent; padding: 6px 13px; border-radius: 6px; font-size: 0.8rem;
+      font-weight: 700; color: var(--text-sub); cursor: pointer; font-family: inherit; }
+    .step-pill.active { background: #fff; color: var(--text-main); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .mobile-unit-bar, .drawer-close, .drawer-backdrop { display: none; }
+    .toolbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 7px 13px; border-radius: 7px; border: 1px solid var(--border-mid); background: #fff; color: var(--text-main);
+      font-weight: 700; font-size: 0.81rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
+    .btn:hover { background: #fafaf9; border-color: #a8a29e; }
+    .btn.on { background: var(--accent-soft); border-color: #b7d4cb; color: var(--accent); }
+    .btn-print { background: var(--accent); color: #fff; border-color: var(--accent); padding: 7px 16px; }
+    .btn-print:hover { background: #234b3f; border-color: #234b3f; }
+    .btn-all-print { background: #0f766e; color: #fff; border-color: #0f766e; padding: 7px 16px; }
+    .btn-all-print:hover { background: #115e59; border-color: #115e59; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text-main); color: #fff; padding: 10px 16px;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: none; z-index: 100; }
+    .preview-workspace { padding: 28px 24px 64px; flex: 1; }
+    #sheetsContainer { display: flex; flex-direction: column; gap: 32px; }
+
+    /* ====== A4 プリント紙面 ====== */
+    .sheet { width: 210mm; min-height: 280mm; margin: 0 auto; background: #fff; padding: 11mm 13mm;
+      box-shadow: 0 2px 12px rgba(28,25,23,0.06), 0 0 1px rgba(28,25,23,0.12); display: flex; flex-direction: column; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end;
+      border-bottom: 1.5px solid var(--ink); padding-bottom: 6px; margin-bottom: 8px; }
+    .sheet-title-wrap { display: flex; align-items: baseline; gap: 10px; }
+    .sheet-title { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.05em; }
+    .sheet-step-badge { font-size: 0.74rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #f4f4f5;
+      border: 1px solid #71717a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet-page-num { font-size: 0.8rem; color: #71717a; font-weight: 600; }
+    .name-line { font-size: 0.94rem; border-bottom: 1px solid var(--ink); width: 195px; padding-bottom: 3px; letter-spacing: 0.05em; }
+    .guide { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 8px; }
+
+    /* 今日の漢字 */
+    .kanji-strip { display: flex; gap: 8px; margin-bottom: 8px; }
+    .kbox { flex: 1; border: 1.2px solid var(--ink); border-radius: 6px; text-align: center; padding: 3px 2px 4px; }
+    .kbox .kk { font-size: 1.9rem; line-height: 1.1; font-weight: 700; }
+    .kbox .kr { font-size: 0.66rem; color: var(--text-sub); line-height: 1.3; min-height: 1.3em; }
+
+    /* 行（問題＋こたえ欄）*/
+    .rows { display: block; }
+    .row { display: grid; grid-template-columns: 1fr 36mm; align-items: center; }
+    .no-fold .row { grid-template-columns: 1fr; }
+    .no-fold .ans-cell { display: none; }
+    .ans-cell { border-left: 1.5px dashed #71717a; padding: 0 0 0 3mm; font-size: 0.82rem; color: var(--ink); align-self: stretch;
+      display: flex; align-items: center; line-height: 1.3; }
+    .ans-cell.head { font-size: 0.68rem; color: #71717a; align-items: flex-end; }
+    .sec-title { font-size: 0.92rem; font-weight: 700; padding: 5px 0 3px; }
+    .sec-title span { font-size: 0.74rem; font-weight: 600; color: var(--text-sub); margin-left: 6px; }
+    .item { display: flex; align-items: center; gap: 8px; padding: 0.8mm 0 0.6mm; border-bottom: 1px dotted #d4d4d8; min-height: 10mm; }
+    .item .no { width: 1.6em; font-size: 0.86rem; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
+    .item .txt { font-size: 1.45rem; line-height: 1.75; color: var(--ink); flex: 1; letter-spacing: 0.04em; }
+    .item.sent .txt { font-size: 1.3rem; }
+    .item .choice { font-size: 0.92rem; color: var(--text-sub); white-space: nowrap; }
+    .item .chk { width: 5mm; height: 5mm; border: 1.2px solid var(--ink); border-radius: 50%; flex-shrink: 0; margin-right: 2mm; }
+    .rei-badge { border: 1.2px solid var(--ink); border-radius: 4px; padding: 0 6px; font-size: 0.68rem; flex-shrink: 0; }
+    ruby rt { font-size: 0.5em; letter-spacing: 0; color: var(--ink); }
+    ruby rt.hide { visibility: hidden; }
+    .tg { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+    .foot { margin-top: auto; padding-top: 6px; font-size: 0.72rem; color: #71717a; display: flex; justify-content: space-between; }
+
+    @media (max-width: 820px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.2s; width: min(86vw, 320px); z-index: 60; }
+      body.drawer-open .sidebar { transform: translateX(0); }
+      .drawer-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 55; }
+      body.drawer-open .drawer-backdrop { display: block; }
+      .drawer-close { display: block; position: absolute; top: 10px; right: 10px; width: 36px; height: 36px;
+        border: 1px solid var(--border-mid); border-radius: 8px; background: #fff; font-size: 1.2rem; cursor: pointer; z-index: 6; }
+      .brand-box { padding: 14px 52px 12px 16px; }
+      .main-area { margin-left: 0; width: 100%; max-width: 100vw; }
+      .top-toolbar { position: static; padding: 10px 10px 8px; }
+      .toolbar-inner { flex-direction: column; align-items: stretch; gap: 8px; }
+      .mobile-unit-bar { display: flex; align-items: center; gap: 10px; }
+      .btn-menu { flex-shrink: 0; background: var(--accent); color: #fff; border-color: var(--accent); }
+      .current-unit-name { font-size: 0.86rem; font-weight: 800; line-height: 1.35; }
+      .pill-sub { display: none; }
+      .step-pills { display: flex; }
+      .step-pill { flex: 1; padding: 6px 4px; font-size: 0.76rem; white-space: nowrap; }
+      .toolbar-actions { flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 2px; }
+      .toolbar-actions > * { flex-shrink: 0; white-space: nowrap; }
+      .btn { padding: 6px 10px; font-size: 0.76rem; }
+      .toast { left: 16px; right: 16px; bottom: 16px; text-align: center; }
+      .preview-workspace { padding: 12px 6px 48px; overflow-x: auto; }
+      .sheet { zoom: 0.46; }
+    }
+
+    @media print {
+      @page { size: A4 portrait; margin: 8mm 12mm; }
+      html, body { background: #fff !important; display: block !important; height: auto !important; min-height: 0 !important; }
+      .no-print { display: none !important; }
+      .main-area { margin-left: 0 !important; display: block !important; }
+      .preview-workspace { padding: 0 !important; }
+      #sheetsContainer { display: block !important; gap: 0 !important; }
+      .sheet { zoom: 1 !important; width: 100% !important; min-height: 0 !important; height: auto !important; box-shadow: none !important;
+        padding: 2mm 2mm 0 2mm !important; margin: 0 !important; page-break-inside: avoid; break-inside: avoid; }
+      .sheet:not(:last-child) { page-break-after: always; break-after: page; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="drawer-backdrop no-print" id="drawerBackdrop" onclick="closeDrawer()"></div>
+  <aside class="sidebar no-print" id="sidebar">
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="閉じる">×</button>
+    <div class="brand-box">
+      <div class="subject-switch">
+        <a href="../index.html">算数</a>
+        <a href="kanji-yomi.html" class="active">国語（漢字の読み）</a>
+      </div>
+      <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
+      <div class="brand-main">ゆっくり・すっきり<br/>かんじ よみプリント</div>
+      <div class="brand-count" id="unitCountLabel"></div>
+      <div class="brand-note">
+        <p>学校・家庭・放課後等デイサービスで、自由に印刷してお使いください（無料・登録不要）。再配布・販売はご遠慮ください。</p>
+        <p>試作版です。読みや例文のまちがい、表示の崩れを見つけたら、ご報告いただけるとうれしいです。</p>
+      </div>
+    </div>
+    <div class="unit-list" id="unitListContainer"></div>
+  </aside>
+
+  <div class="main-area">
+    <header class="top-toolbar no-print">
+      <div class="toolbar-inner">
+        <div class="mobile-unit-bar">
+          <button class="btn btn-menu" onclick="openDrawer()" aria-label="教材を選ぶ">☰ 教材</button>
+          <div class="current-unit-name" id="currentUnitName"></div>
+        </div>
+        <div class="step-pills">
+          <button class="step-pill active" id="pill-step1" onclick="setStep('step1')">ステップ1<span class="pill-sub">（ふりがなあり）</span></button>
+          <button class="step-pill" id="pill-step2" onclick="setStep('step2')">ステップ2<span class="pill-sub">（えらんで読む）</span></button>
+          <button class="step-pill" id="pill-step3" onclick="setStep('step3')">ステップ3<span class="pill-sub">（ふりがななし）</span></button>
+          <button class="step-pill" id="pill-all" onclick="setStep('all')">全ステップ<span class="pill-sub">（1〜3一括）</span></button>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn" onclick="shuffleItems()">もんだいを入れかえる</button>
+          <button class="btn on" id="btnFold" onclick="toggleFold()">こたえ欄（折って隠す）</button>
+          <button class="btn" onclick="copyUnitLink()" title="この単元のURLをコピー">URLコピー</button>
+          <button class="btn btn-all-print" onclick="printAll()" title="ステップ1・2・3をまとめて印刷">単元一括印刷（1〜3）</button>
+          <button class="btn btn-print" onclick="window.print()">A4で印刷</button>
+        </div>
+      </div>
+    </header>
+    <main class="preview-workspace"><div id="sheetsContainer"></div></main>
+  </div>
+  <div class="toast" id="toastBox"></div>
+
+  <script src="kanji3-data.js"></script>
+  <script>
+    const STEP_INFO = {
+      step1: { badge: "ステップ1", sub: "ふりがなあり", guide: "ふりがなを たよりに、こえに だして よんでみよう。よめたら ○に ✓を つけよう。" },
+      step2: { badge: "ステップ2", sub: "えらんで読む", guide: "ふりがなは ないよ。（　）の 2つから よみを えらんで ○を つけて、よんでみよう。" },
+      step3: { badge: "ステップ3", sub: "ふりがななし", guide: "ふりがなは ないよ。じぶんの ちからで よんでみよう。よめたら ○に ✓を つけよう。" }
+    };
+    let state = { unit: KANJI_UNITS[0].id, level: "step1", seed: 1, fold: true };
+
+    /* ---------- 表記のパース ---------- */
+    function parse(str) {
+      const nodes = [], re = /\{([^|}]+)\|([^|}]+)(?:\|(!))?\}/g;
+      let last = 0, m;
+      while ((m = re.exec(str)) !== null) {
+        if (m.index > last) nodes.push({ t: "x", text: str.slice(last, m.index) });
+        nodes.push({ t: "r", k: m[1], r: m[2], always: !!m[3] });
+        last = re.lastIndex;
+      }
+      if (last < str.length) nodes.push({ t: "x", text: str.slice(last) });
+      return nodes;
+    }
+    function readingOf(str) { return parse(str).map(n => n.t === "r" ? n.r : n.text).join("").replace(/\s/g, ""); }
+    function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+    /* ふりがなを出すか: step1=全部 / step2,3=「!」付きだけ。非表示でも場所は確保（行の高さを揃える） */
+    function renderText(str, level, unitKanji, underline) {
+      const nodes = parse(str);
+      let html = "", i = 0;
+      while (i < nodes.length) {
+        if (nodes[i].t === "x") { html += esc(nodes[i].text); i++; continue; }
+        let j = i, run = "", isTarget = false;
+        while (j < nodes.length && nodes[j].t === "r") {
+          const n = nodes[j];
+          const show = level === "step1" || n.always;
+          run += `<ruby>${esc(n.k)}<rt class="${show ? "" : "hide"}">${esc(n.r)}</rt></ruby>`;
+          if ([...n.k].some(c => unitKanji.includes(c))) isTarget = true;
+          j++;
+        }
+        html += (underline && isTarget) ? `<span class="tg">${run}</span>` : run;
+        i = j;
+      }
+      return html;
+    }
+    /* 文の中の「新出漢字をふくむ語」のこたえ（例: 医者→いしゃ） */
+    function targetAnswers(str, unitKanji) {
+      const nodes = parse(str), out = [];
+      let i = 0;
+      while (i < nodes.length) {
+        if (nodes[i].t !== "r") { i++; continue; }
+        let j = i, k = "", r = "", isTarget = false;
+        while (j < nodes.length && nodes[j].t === "r") {
+          k += nodes[j].k; r += nodes[j].r;
+          if ([...nodes[j].k].some(c => unitKanji.includes(c))) isTarget = true;
+          j++;
+        }
+        if (isTarget) out.push(`${k}→${r}`);
+        i = j;
+      }
+      return out.join("、");
+    }
+
+    /* ---------- 乱数（シード固定で入れかえ） ---------- */
+    function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    function shuffled(arr, seed) {
+      if (seed <= 1) return arr.slice();
+      const rnd = mulberry(seed), a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+      return a;
+    }
+
+    /* ---------- シート組み立て ---------- */
+    function getUnit(id) { return KANJI_UNITS.find(u => u.id === id) || KANJI_UNITS[0]; }
+    function circled(n) { return "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳"[n - 1] || String(n); }
+
+    function buildSheet(unitId, level, pageLabel) {
+      const u = getUnit(unitId), info = STEP_INFO[level];
+      const uk = u.kanji.map(x => x.k).join("");
+      const words = [], sents = [];
+      u.kanji.forEach(x => { x.words.forEach(w => words.push(w)); sents.push(x.sent); });
+      const W = shuffled(words, state.seed), S = shuffled(sents, state.seed * 7);
+
+      const strip = u.kanji.map(x => {
+        const kr = level === "step1" ? `${esc(x.on)}${x.kun ? "<br>" + esc(x.kun) : ""}` : "";
+        return `<div class="kbox"><div class="kk">${esc(x.k)}</div><div class="kr">${kr}</div></div>`;
+      }).join("");
+
+      let n = 0, rows = "";
+      rows += `<div class="row"><div class="sec-title">1 じゅくごを よもう<span>（${W.length}もん）</span></div><div class="ans-cell head">こたえ ←ここで おる</div></div>`;
+      W.forEach((w, idx) => {
+        n++;
+        let choice = "";
+        if (level === "step2") {
+          const right = readingOf(w.w), pair = (idx % 2 === 0) ? [right, w.d] : [w.d, right];
+          choice = `<span class="choice">（ ${esc(pair[0])} ・ ${esc(pair[1])} ）</span>`;
+        }
+        const rei = (idx === 0 && level === "step1") ? `<span class="rei-badge">れい</span>` : "";
+        rows += `<div class="row"><div class="item"><span class="no">${n}</span><span class="txt">${renderText(w.w, level, uk, false)}</span>${rei}${choice}<span class="chk"></span></div>` +
+                `<div class="ans-cell">${esc(readingOf(w.w))}</div></div>`;
+      });
+      rows += `<div class="row"><div class="sec-title">2 ぶんの なかで よもう<span>（せんを ひいた ことばに ちゅうい）</span></div><div class="ans-cell"></div></div>`;
+      S.forEach(s => {
+        n++;
+        rows += `<div class="row"><div class="item sent"><span class="no">${n}</span><span class="txt">${renderText(s, level, uk, true)}</span><span class="chk"></span></div>` +
+                `<div class="ans-cell">${esc(targetAnswers(s, uk))}</div></div>`;
+      });
+
+      return `<section class="sheet ${state.fold ? "" : "no-fold"}">
+        <div class="sheet-header">
+          <div class="sheet-title-wrap">
+            <div class="sheet-title">かんじ よみ ${u.grade}年 ${circled(u.no)}</div>
+            <span class="sheet-step-badge">${info.badge}（${info.sub}）</span>
+            <span class="sheet-page-num">${pageLabel || ""}</span>
+          </div>
+          <div class="name-line">なまえ</div>
+        </div>
+        <div class="guide">${info.guide}</div>
+        <div class="kanji-strip">${strip}</div>
+        <div class="rows">${rows}</div>
+        <div class="foot"><span>ゆっくり・すっきり かんじ よみプリント</span><span>${u.grade}年 配当漢字 ${circled(u.no)}</span></div>
+      </section>`;
+    }
+
+    function render() {
+      const c = document.getElementById("sheetsContainer");
+      let html = "";
+      if (state.level === "all") ["step1", "step2", "step3"].forEach((st, i) => { html += buildSheet(state.unit, st, `（${i + 1} / 3）`); });
+      else html = buildSheet(state.unit, state.level, "");
+      c.innerHTML = html;
+      document.getElementById("currentUnitName").textContent = unitLabel(getUnit(state.unit));
+    }
+
+    /* ---------- UI ---------- */
+    function unitLabel(u) { return `${u.grade}年 ${circled(u.no)} ${u.kanji.map(x => x.k).join("")}`; }
+    function renderSidebar() {
+      const total = KANJI_UNITS.reduce((a, u) => a + u.kanji.length, 0);
+      document.getElementById("unitCountLabel").textContent = `3年 配当漢字 ${total}字を公開中（全200字・じゅんび中）`;
+      let html = `<div><div class="cat-group-title">3年・漢字の読み（配当順）</div>`;
+      KANJI_UNITS.forEach(u => {
+        html += `<button class="unit-btn ${u.id === state.unit ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
+                `<span class="unit-grade-tag">${u.grade}年</span><span class="unit-name">${circled(u.no)} ${u.kanji.map(x => x.k).join(" ")}</span></button>`;
+      });
+      html += `<div class="coming">つづきは じゅんび中です</div></div>`;
+      document.getElementById("unitListContainer").innerHTML = html;
+    }
+    function selectUnit(id) { state.unit = id; state.seed = 1; renderSidebar(); updateURL(); render(); closeDrawer(); window.scrollTo(0, 0); }
+    function setStep(s) {
+      state.level = s;
+      ["step1", "step2", "step3", "all"].forEach(x => document.getElementById("pill-" + x).classList.toggle("active", x === s));
+      updateURL(); render();
+    }
+    function shuffleItems() { state.seed = Math.floor(Math.random() * 100000) + 2; render(); }
+    function toggleFold() { state.fold = !state.fold; document.getElementById("btnFold").classList.toggle("on", state.fold); render(); }
+    function printAll() { const prev = state.level; state.level = "all"; render(); window.print(); state.level = prev; render(); }
+    function openDrawer() { document.body.classList.add("drawer-open"); }
+    function closeDrawer() { document.body.classList.remove("drawer-open"); }
+    function showToast(msg) { const t = document.getElementById("toastBox"); t.textContent = msg; t.style.display = "block"; setTimeout(() => t.style.display = "none", 1800); }
+    function updateURL() { const url = new URL(location.href); url.searchParams.set("unit", state.unit); url.searchParams.set("step", state.level); history.replaceState({}, "", url); }
+    function copyUnitLink() {
+      updateURL();
+      (navigator.clipboard ? navigator.clipboard.writeText(location.href) : Promise.reject()).then(() => showToast("URLをコピーしました"), () => showToast("コピーできませんでした"));
+    }
+    function initFromURL() {
+      const p = new URLSearchParams(location.search), u = p.get("unit"), s = p.get("step");
+      if (u && KANJI_UNITS.some(x => x.id === u)) state.unit = u;
+      if (s && ["step1", "step2", "step3", "all"].includes(s)) state.level = s;
+    }
+
+    initFromURL();
+    renderSidebar();
+    setStep(state.level);
+  </script>
+</body>
+</html>
