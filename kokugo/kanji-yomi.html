@@ -32,8 +32,8 @@
     .brand-note { font-size: 0.68rem; color: var(--text-sub); line-height: 1.55; margin-top: 10px; padding: 8px 10px;
       background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; }
     .brand-note p + p { margin-top: 4px; }
-    .grade-filter { display: flex; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--border-soft); background: #fafaf9; position: sticky; top: 0; z-index: 5; }
-    .grade-chip { border: 1px solid transparent; background: transparent; color: var(--text-sub); font-size: 0.75rem; font-weight: 700; padding: 5px 8px; border-radius: 6px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex: 1; text-align: center; }
+    .grade-filter { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--border-soft); background: #fafaf9; position: sticky; top: 0; z-index: 5; }
+    .grade-chip { border: 1px solid transparent; background: transparent; color: var(--text-sub); font-size: 0.72rem; font-weight: 700; padding: 4px 6px; border-radius: 6px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex: 1 0 auto; text-align: center; }
     .grade-chip:hover { background: var(--bg-subtle); }
     .grade-chip.active { background: var(--text-main); color: #fff; }
     .unit-list { padding: 14px 12px 32px; display: flex; flex-direction: column; gap: 18px; flex: 1; }
@@ -180,9 +180,12 @@
     </div>
     <div class="grade-filter">
       <button class="grade-chip active" id="chip-all" onclick="filterGrade('all', this)">すべて</button>
-      <button class="grade-chip" id="chip-1" onclick="filterGrade('1', this)">1年生</button>
-      <button class="grade-chip" id="chip-2" onclick="filterGrade('2', this)">2年生</button>
-      <button class="grade-chip" id="chip-3" onclick="filterGrade('3', this)">3年生</button>
+      <button class="grade-chip" id="chip-1" onclick="filterGrade('1', this)">1年</button>
+      <button class="grade-chip" id="chip-2" onclick="filterGrade('2', this)">2年</button>
+      <button class="grade-chip" id="chip-3" onclick="filterGrade('3', this)">3年</button>
+      <button class="grade-chip" id="chip-4" onclick="filterGrade('4', this)">4年</button>
+      <button class="grade-chip" id="chip-5" onclick="filterGrade('5', this)">5年</button>
+      <button class="grade-chip" id="chip-6" onclick="filterGrade('6', this)">6年</button>
     </div>
     <div class="unit-list" id="unitListContainer"></div>
   </aside>
@@ -216,8 +219,11 @@
   <script src="kanji1-data.js"></script>
   <script src="kanji2-data.js"></script>
   <script src="kanji3-data.js"></script>
+  <script src="kanji4-data.js"></script>
+  <script src="kanji5-data.js"></script>
+  <script src="kanji6-data.js"></script>
   <script>
-    const ALL_UNITS = [...KANJI_UNITS_G1, ...KANJI_UNITS_G2, ...KANJI_UNITS];
+    const ALL_UNITS = [...KANJI_UNITS_G1, ...KANJI_UNITS_G2, ...KANJI_UNITS, ...KANJI_UNITS_G4, ...KANJI_UNITS_G5, ...KANJI_UNITS_G6];
     const STEP_INFO = {
       step1: { badge: "ステップ1", sub: "なぞって書く", guide: "こえに だして よみながら、マスの うすい じを なぞろう。おわったら みぎを ひらいて こたえあわせ。" },
       step2: { badge: "ステップ2", sub: "はじめの1字ヒント", guide: "はじめの 1じだけ ヒントが あるよ。のこりの よみを マスに かこう。" },
@@ -301,7 +307,7 @@
         return `<div class="cell">${t}</div>`;
       }).join("") + `</div>`;
     }
-    function circled(n) { return "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵"[n - 1] || String(n); }
+    function circled(n) { return "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿"[n - 1] || String(n); }
 
     function buildSheet(unitId, level, pageLabel) {
       const u = getUnit(unitId), info = STEP_INFO[level];
@@ -360,42 +366,34 @@
 
     /* ---------- UI ---------- */
     function unitLabel(u) { return `${u.grade}年 ${circled(u.no)} ${u.kanji.map(x => x.k).join("")}`; }
+    const GRADE_CONFIG = [
+      { grade: "1", title: "1年生・配当漢字（全80字・16単元）", list: KANJI_UNITS_G1, kanjiCount: 80 },
+      { grade: "2", title: "2年生・配当漢字（全160字・32単元）", list: KANJI_UNITS_G2, kanjiCount: 160 },
+      { grade: "3", title: "3年生・配当漢字（全200字・40単元）", list: KANJI_UNITS, kanjiCount: 200 },
+      { grade: "4", title: "4年生・配当漢字（全202字・41単元）", list: KANJI_UNITS_G4, kanjiCount: 202 },
+      { grade: "5", title: "5年生・配当漢字（全193字・39単元）", list: KANJI_UNITS_G5, kanjiCount: 193 },
+      { grade: "6", title: "6年生・配当漢字（全191字・38単元）", list: KANJI_UNITS_G6, kanjiCount: 191 }
+    ];
+
     function renderSidebar() {
-      const g1List = (state.gradeFilter === "all" || state.gradeFilter === "1") ? KANJI_UNITS_G1 : [];
-      const g2List = (state.gradeFilter === "all" || state.gradeFilter === "2") ? KANJI_UNITS_G2 : [];
-      const g3List = (state.gradeFilter === "all" || state.gradeFilter === "3") ? KANJI_UNITS : [];
       const totalKanji = ALL_UNITS.reduce((a, u) => a + u.kanji.length, 0);
-      const gradeCounts = { "1": KANJI_UNITS_G1.length, "2": KANJI_UNITS_G2.length, "3": KANJI_UNITS.length };
+      const curConfig = GRADE_CONFIG.find(c => c.grade === state.gradeFilter);
       document.getElementById("unitCountLabel").textContent =
         state.gradeFilter === "all"
-          ? `1〜3年 配当漢字 全${totalKanji}字（全${ALL_UNITS.length}単元）を公開中`
-          : `${state.gradeFilter}年生：配当漢字 ${gradeCounts[state.gradeFilter] * 5}字（全${gradeCounts[state.gradeFilter]}単元）`;
+          ? `小1〜6年 配当漢字 全${totalKanji}字（全${ALL_UNITS.length}単元）を公開中`
+          : `${curConfig.grade}年生：配当漢字 ${curConfig.kanjiCount}字（全${curConfig.list.length}単元）`;
 
       let html = "";
-      if (g1List.length > 0) {
-        html += `<div><div class="cat-group-title">1年生・配当漢字（全80字・16単元）</div>`;
-        g1List.forEach(u => {
-          html += `<button class="unit-btn ${u.id === state.unit ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
-                  `<span class="unit-grade-tag">${u.grade}年</span><span class="unit-name">${circled(u.no)} ${u.kanji.map(x => x.k).join(" ")}</span></button>`;
-        });
-        html += `</div>`;
-      }
-      if (g2List.length > 0) {
-        html += `<div><div class="cat-group-title">2年生・配当漢字（全160字・32単元）</div>`;
-        g2List.forEach(u => {
-          html += `<button class="unit-btn ${u.id === state.unit ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
-                  `<span class="unit-grade-tag">${u.grade}年</span><span class="unit-name">${circled(u.no)} ${u.kanji.map(x => x.k).join(" ")}</span></button>`;
-        });
-        html += `</div>`;
-      }
-      if (g3List.length > 0) {
-        html += `<div><div class="cat-group-title">3年生・配当漢字（全200字・40単元）</div>`;
-        g3List.forEach(u => {
-          html += `<button class="unit-btn ${u.id === state.unit ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
-                  `<span class="unit-grade-tag">${u.grade}年</span><span class="unit-name">${circled(u.no)} ${u.kanji.map(x => x.k).join(" ")}</span></button>`;
-        });
-        html += `</div>`;
-      }
+      GRADE_CONFIG.forEach(cfg => {
+        if (state.gradeFilter === "all" || state.gradeFilter === cfg.grade) {
+          html += `<div><div class="cat-group-title">${cfg.title}</div>`;
+          cfg.list.forEach(u => {
+            html += `<button class="unit-btn ${u.id === state.unit ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
+                    `<span class="unit-grade-tag">${u.grade}年</span><span class="unit-name">${circled(u.no)} ${u.kanji.map(x => x.k).join(" ")}</span></button>`;
+          });
+          html += `</div>`;
+        }
+      });
       document.getElementById("unitListContainer").innerHTML = html;
     }
 
@@ -434,7 +432,7 @@
     function initFromURL() {
       const p = new URLSearchParams(location.search);
       const u = p.get("unit"), s = p.get("step"), g = p.get("grade");
-      if (g && ["all", "1", "2", "3"].includes(g)) {
+      if (g && ["all", "1", "2", "3", "4", "5", "6"].includes(g)) {
         state.gradeFilter = g;
         document.querySelectorAll(".grade-chip").forEach(el => el.classList.remove("active"));
         const chip = document.getElementById("chip-" + g);
