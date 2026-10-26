@@ -288,7 +288,7 @@
         return `<div class="cell">${t}</div>`;
       }).join("") + `</div>`;
     }
-    function circled(n) { return "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳"[n - 1] || String(n); }
+    function circled(n) { return "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵"[n - 1] || String(n); }
 
     function buildSheet(unitId, level, pageLabel) {
       const u = getUnit(unitId), info = STEP_INFO[level];
@@ -349,13 +349,14 @@
     function unitLabel(u) { return `${u.grade}年 ${circled(u.no)} ${u.kanji.map(x => x.k).join("")}`; }
     function renderSidebar() {
       const total = KANJI_UNITS.reduce((a, u) => a + u.kanji.length, 0);
-      document.getElementById("unitCountLabel").textContent = `3年 配当漢字 ${total}字を公開中（全200字・じゅんび中）`;
+      document.getElementById("unitCountLabel").textContent = total >= 200 ? `3年 配当漢字 全${total}字（全${KANJI_UNITS.length}単元）を公開中` : `3年 配当漢字 ${total}字を公開中（全200字・じゅんび中）`;
       let html = `<div><div class="cat-group-title">3年・漢字の読み（配当順）</div>`;
       KANJI_UNITS.forEach(u => {
         html += `<button class="unit-btn ${u.id === state.unit ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
                 `<span class="unit-grade-tag">${u.grade}年</span><span class="unit-name">${circled(u.no)} ${u.kanji.map(x => x.k).join(" ")}</span></button>`;
       });
-      html += `<div class="coming">つづきは じゅんび中です</div></div>`;
+      if (total < 200) html += `<div class="coming">つづきは じゅんび中です</div>`;
+      html += `</div>`;
       document.getElementById("unitListContainer").innerHTML = html;
     }
     function selectUnit(id) { state.unit = id; state.seed = 1; renderSidebar(); updateURL(); render(); closeDrawer(); window.scrollTo(0, 0); }
