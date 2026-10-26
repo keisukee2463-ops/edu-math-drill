@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ゆっくり・すっきり かんじ よみプリント（2年・3年）</title>
+  <title>ゆっくり・すっきり かんじ よみプリント（1〜3年）</title>
   <style>
     :root {
       --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
@@ -180,6 +180,7 @@
     </div>
     <div class="grade-filter">
       <button class="grade-chip active" id="chip-all" onclick="filterGrade('all', this)">すべて</button>
+      <button class="grade-chip" id="chip-1" onclick="filterGrade('1', this)">1年生</button>
       <button class="grade-chip" id="chip-2" onclick="filterGrade('2', this)">2年生</button>
       <button class="grade-chip" id="chip-3" onclick="filterGrade('3', this)">3年生</button>
     </div>
@@ -212,10 +213,11 @@
   </div>
   <div class="toast" id="toastBox"></div>
 
+  <script src="kanji1-data.js"></script>
   <script src="kanji2-data.js"></script>
   <script src="kanji3-data.js"></script>
   <script>
-    const ALL_UNITS = [...KANJI_UNITS_G2, ...KANJI_UNITS];
+    const ALL_UNITS = [...KANJI_UNITS_G1, ...KANJI_UNITS_G2, ...KANJI_UNITS];
     const STEP_INFO = {
       step1: { badge: "ステップ1", sub: "なぞって書く", guide: "こえに だして よみながら、マスの うすい じを なぞろう。おわったら みぎを ひらいて こたえあわせ。" },
       step2: { badge: "ステップ2", sub: "はじめの1字ヒント", guide: "はじめの 1じだけ ヒントが あるよ。のこりの よみを マスに かこう。" },
@@ -359,15 +361,25 @@
     /* ---------- UI ---------- */
     function unitLabel(u) { return `${u.grade}年 ${circled(u.no)} ${u.kanji.map(x => x.k).join("")}`; }
     function renderSidebar() {
-      const g2List = state.gradeFilter === "3" ? [] : KANJI_UNITS_G2;
-      const g3List = state.gradeFilter === "2" ? [] : KANJI_UNITS;
+      const g1List = (state.gradeFilter === "all" || state.gradeFilter === "1") ? KANJI_UNITS_G1 : [];
+      const g2List = (state.gradeFilter === "all" || state.gradeFilter === "2") ? KANJI_UNITS_G2 : [];
+      const g3List = (state.gradeFilter === "all" || state.gradeFilter === "3") ? KANJI_UNITS : [];
       const totalKanji = ALL_UNITS.reduce((a, u) => a + u.kanji.length, 0);
+      const gradeCounts = { "1": KANJI_UNITS_G1.length, "2": KANJI_UNITS_G2.length, "3": KANJI_UNITS.length };
       document.getElementById("unitCountLabel").textContent =
         state.gradeFilter === "all"
-          ? `2年・3年 配当漢字 全${totalKanji}字（全${ALL_UNITS.length}単元）を公開中`
-          : `${state.gradeFilter}年生：配当漢字 ${state.gradeFilter === "2" ? KANJI_UNITS_G2.length * 5 : KANJI_UNITS.length * 5}字（全${state.gradeFilter === "2" ? KANJI_UNITS_G2.length : KANJI_UNITS.length}単元）`;
+          ? `1〜3年 配当漢字 全${totalKanji}字（全${ALL_UNITS.length}単元）を公開中`
+          : `${state.gradeFilter}年生：配当漢字 ${gradeCounts[state.gradeFilter] * 5}字（全${gradeCounts[state.gradeFilter]}単元）`;
 
       let html = "";
+      if (g1List.length > 0) {
+        html += `<div><div class="cat-group-title">1年生・配当漢字（全80字・16単元）</div>`;
+        g1List.forEach(u => {
+          html += `<button class="unit-btn ${u.id === state.unit ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
+                  `<span class="unit-grade-tag">${u.grade}年</span><span class="unit-name">${circled(u.no)} ${u.kanji.map(x => x.k).join(" ")}</span></button>`;
+        });
+        html += `</div>`;
+      }
       if (g2List.length > 0) {
         html += `<div><div class="cat-group-title">2年生・配当漢字（全160字・32単元）</div>`;
         g2List.forEach(u => {
@@ -422,7 +434,7 @@
     function initFromURL() {
       const p = new URLSearchParams(location.search);
       const u = p.get("unit"), s = p.get("step"), g = p.get("grade");
-      if (g && ["all", "2", "3"].includes(g)) {
+      if (g && ["all", "1", "2", "3"].includes(g)) {
         state.gradeFilter = g;
         document.querySelectorAll(".grade-chip").forEach(el => el.classList.remove("active"));
         const chip = document.getElementById("chip-" + g);
