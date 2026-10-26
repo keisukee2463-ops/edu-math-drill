@@ -311,6 +311,18 @@
       border-color: #234b3f;
     }
 
+    .btn-all-print {
+      background: #0f766e;
+      color: #fff;
+      border-color: #0f766e;
+      padding: 7px 16px;
+    }
+
+    .btn-all-print:hover {
+      background: #115e59;
+      border-color: #115e59;
+    }
+
     .toast {
       position: fixed;
       bottom: 24px;
@@ -371,6 +383,21 @@
       font-weight: 700;
       letter-spacing: 0.05em;
       color: var(--ink);
+    }
+
+    .sheet-step-badge {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f4f4f5;
+      color: #18181b;
+      border: 1px solid #71717a;
+      letter-spacing: 0.02em;
+      vertical-align: middle;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
 
     .sheet-page-num {
@@ -1020,6 +1047,9 @@
           <button class="step-pill" id="pill-step3" onclick="setStep('step3')">
             ステップ3（定着・マスのみ）
           </button>
+          <button class="step-pill" id="pill-all" onclick="setStep('all')">
+            全ステップ（1〜3一括）
+          </button>
         </div>
 
         <div class="toolbar-actions">
@@ -1032,6 +1062,7 @@
           <button class="btn" onclick="shuffle()">数字を変える</button>
           <button class="btn btn-ans" id="btnAnsToggle" onclick="toggleAnswers()">こたえ表示</button>
           <button class="btn" onclick="copyUnitLink()" title="この単元のURLをコピー">URLコピー</button>
+          <button class="btn btn-all-print" onclick="printAllUnitSteps()" title="この単元のステップ1・2・3をまとめて印刷">単元一括印刷（1〜3）</button>
           <button class="btn btn-print" onclick="window.print()">A4で印刷</button>
         </div>
       </div>
@@ -1304,6 +1335,8 @@
       baseSeed: 1
     };
 
+    let currentRenderingStep = "";
+
     function initFromURL() {
       const params = new URLSearchParams(window.location.search);
       const u = params.get("unit");
@@ -1311,7 +1344,7 @@
       if (u && CATALOG.some(cat => cat.items.some(i => i.id === u))) {
         state.unit = u;
       }
-      if (st && ["step1", "step2", "step3"].includes(st)) {
+      if (st && ["step1", "step2", "step3", "all"].includes(st)) {
         state.level = st;
       }
     }
@@ -1368,9 +1401,19 @@
     function setStep(stepId) {
       state.level = stepId;
       document.querySelectorAll(".step-pill").forEach(el => el.classList.remove("active"));
-      document.getElementById("pill-" + stepId).classList.add("active");
+      const pill = document.getElementById("pill-" + stepId);
+      if (pill) pill.classList.add("active");
       updateURLParams();
       render();
+    }
+
+    function printAllUnitSteps() {
+      if (state.level !== "all") {
+        setStep("all");
+      }
+      setTimeout(() => {
+        window.print();
+      }, 100);
     }
 
     function toggleAnswers() {
@@ -1648,9 +1691,10 @@
       return wrapSheet(title, pageLabel, 'problems-grid single-col', itemsHtml);
     }
 
-    function buildSingleSheetHTML(unit, level, pageIdx, totalPages) {
+    function buildSingleSheetHTML(unit, level, pageIdx, totalPages, overridePageLabel = null) {
+      currentRenderingStep = level;
       const s = state.baseSeed + pageIdx * 101;
-      const pageLabel = totalPages > 1 ? `（${pageIdx + 1} / ${totalPages}）` : '';
+      const pageLabel = overridePageLabel !== null ? overridePageLabel : (totalPages > 1 ? `（${pageIdx + 1} / ${totalPages}）` : '');
 
       const g5Res = addG5Units(unit, level, s, pageLabel);
       if (g5Res) return g5Res;
@@ -8020,12 +8064,21 @@ function addG6Units(unit, level, s, pageLabel) {
 
 
 function wrapSheet(title, pageLabel, gridClass, itemsHtml) {
+      const stepLabels = {
+        step1: "ステップ1（導入）",
+        step2: "ステップ2（練習）",
+        step3: "ステップ3（定着）"
+      };
+      const stepName = stepLabels[currentRenderingStep] || "";
+      const stepBadgeHtml = stepName ? `<span class="sheet-step-badge">${stepName}</span>` : "";
+
       return `
         <section class="sheet">
           <div>
             <div class="sheet-header">
               <div class="sheet-title-wrap">
                 <div class="sheet-title">${title}</div>
+                ${stepBadgeHtml}
                 <div class="sheet-page-num">${pageLabel}</div>
               </div>
               <div class="name-line">なまえ（　　　　　　　　　）</div>
@@ -8042,8 +8095,18 @@ function wrapSheet(title, pageLabel, gridClass, itemsHtml) {
       const count = parseInt(document.getElementById('pageCount').value, 10);
       const container = document.getElementById('sheetsContainer');
       let html = '';
-      for (let p = 0; p < count; p++) {
-        html += buildSingleSheetHTML(state.unit, state.level, p, count);
+      if (state.level === 'all') {
+        const steps = ['step1', 'step2', 'step3'];
+        steps.forEach((st, sIdx) => {
+          for (let p = 0; p < count; p++) {
+            const pageLabel = count === 1 ? `（${sIdx + 1} / 3）` : (count > 1 ? `（${p + 1} / ${count}）` : '');
+            html += buildSingleSheetHTML(state.unit, st, p, count, pageLabel);
+          }
+        });
+      } else {
+        for (let p = 0; p < count; p++) {
+          html += buildSingleSheetHTML(state.unit, state.level, p, count);
+        }
       }
       container.innerHTML = html;
     }
