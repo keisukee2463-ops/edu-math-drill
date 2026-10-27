@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ゆっくり・すっきり おくりがなマスタープリント（3年生）</title>
+  <style>
+    :root {
+      --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
+      --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
+      --border-soft: #e7e5e4; --border-mid: #d6d3d1;
+      --accent: #2c5e4f; --accent-soft: #eaf2ef; --ink: #18181b; --ans-red: #c2410c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--bg-app); color: var(--text-main);
+      display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ====== サイドバー ====== */
+    .sidebar { width: 300px; background: var(--bg-panel); border-right: 1px solid var(--border-soft);
+      display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; overflow-y: auto; }
+    .brand-box { padding: 20px 18px 16px; border-bottom: 1px solid var(--border-soft); }
+    .subject-switch { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+    .subject-switch a { flex: 1 0 auto; text-align: center; text-decoration: none; font-size: 0.7rem; font-weight: 700;
+      padding: 5px 6px; border-radius: 6px; color: var(--text-sub); background: var(--bg-subtle); }
+    .subject-switch a.active { background: var(--text-main); color: #fff; }
+    .brand-kicker { font-size: 0.68rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .brand-main { font-size: 1.02rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1.35; }
+    .brand-count { font-size: 0.72rem; color: var(--text-sub); margin-top: 4px; font-weight: 600; }
+    .brand-note { font-size: 0.68rem; color: var(--text-sub); line-height: 1.55; margin-top: 10px; padding: 8px 10px;
+      background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; }
+    .unit-list { padding: 14px 12px 32px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .cat-group-title { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: 0.05em;
+      margin-bottom: 6px; padding-left: 6px; border-left: 3px solid var(--accent); }
+    .unit-btn { width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 7px;
+      padding: 8px 10px; margin-bottom: 4px; cursor: pointer; display: flex; align-items: flex-start; gap: 8px; font-family: inherit; }
+    .unit-btn:hover { background: #fafaf9; border-color: var(--border-soft); }
+    .unit-btn.active { background: var(--accent-soft); border-color: #b7d4cb; }
+    .unit-no-tag { font-size: 0.64rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+      background: var(--bg-subtle); color: var(--text-sub); white-space: nowrap; margin-top: 1px; }
+    .unit-btn.active .unit-no-tag { background: var(--accent); color: #fff; }
+    .unit-name { font-size: 0.82rem; font-weight: 700; line-height: 1.35; }
+    .unit-sub { font-size: 0.7rem; color: var(--text-sub); margin-top: 2px; }
+
+    /* ====== メイン領域 ====== */
+    .main-wrap { margin-left: 300px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .top-toolbar { background: var(--bg-panel); border-bottom: 1px solid var(--border-soft); padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 30; }
+    .toolbar-left { display: flex; align-items: center; gap: 12px; }
+    .drawer-toggle { display: none; background: none; border: 1px solid var(--border-mid); border-radius: 6px;
+      padding: 6px 10px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .level-tabs { display: flex; background: var(--bg-subtle); padding: 3px; border-radius: 8px; gap: 2px; }
+    .level-tab { border: none; background: transparent; padding: 6px 14px; font-size: 0.78rem; font-weight: 700;
+      color: var(--text-sub); border-radius: 6px; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .level-tab.active { background: #fff; color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .btn { border: 1px solid var(--border-mid); background: #fff; padding: 7px 14px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { opacity: 0.92; }
+
+    .content-area { padding: 32px 24px 60px; display: flex; justify-content: center; }
+
+    /* ====== プリント用紙（A4縦） ====== */
+    .print-sheet {
+      width: 210mm; min-height: 297mm; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      padding: 13mm 15mm 12mm; margin-bottom: 32px; display: flex; flex-direction: column; position: relative;
+    }
+
+    /* ヘッダー */
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 8px; border-bottom: 2px solid var(--text-main); margin-bottom: 10px; }
+    .sheet-title-box { display: flex; flex-direction: column; }
+    .sheet-unit-kicker { font-size: 0.82rem; font-weight: 800; color: var(--accent); letter-spacing: 0.05em; }
+    .sheet-title { font-size: 1.38rem; font-weight: 900; letter-spacing: 0.03em; margin-top: 1px; }
+    .sheet-level-badge { font-size: 0.78rem; font-weight: 700; color: #fff; background: var(--accent); padding: 3px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; align-self: flex-start; }
+    .sheet-meta { display: flex; gap: 12px; align-items: flex-end; font-size: 0.85rem; }
+    .meta-box { border-bottom: 1px solid var(--border-mid); padding: 0 8px 3px; min-width: 120px; text-align: right; }
+    .meta-box.name-box { min-width: 170px; text-align: left; }
+
+    /* 説明・リード */
+    .sheet-lead { font-size: 0.82rem; line-height: 1.45; color: var(--text-sub); margin-bottom: 10px; padding: 6px 10px; background: #fafaf9; border-left: 4px solid var(--accent); border-radius: 3px; }
+
+    /* リスト */
+    .q-grid { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .q-row {
+      display: flex; align-items: center; justify-content: space-between;
+      border: 1px solid var(--border-soft); border-radius: 6px; padding: 6px 10px; background: #fff; min-height: 52px;
+    }
+    .q-num { font-size: 0.95rem; font-weight: 900; width: 24px; color: var(--accent); flex-shrink: 0; }
+    
+    /* 問題文エリア */
+    .q-sentence-box { display: flex; align-items: center; gap: 8px; flex: 1; font-size: 1.02rem; font-weight: 700; }
+    .q-pair-tag { font-size: 0.65rem; font-weight: 800; background: var(--bg-subtle); color: var(--accent); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
+
+    /* マス目エリア */
+    .q-inputs { display: flex; align-items: center; gap: 4px; margin: 0 10px; }
+    
+    /* 漢字マス */
+    .kanji-cell {
+      width: 44px; height: 44px; border: 2px solid var(--ink); position: relative;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+    }
+    .kanji-cell::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 0; border-top: 1px dashed #cbd5e1; }
+    .kanji-cell::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 1px dashed #cbd5e1; }
+    
+    /* 送りがな枠 */
+    .okuri-cell {
+      min-width: 44px; height: 44px; border: 1.5px solid var(--border-mid); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center; padding: 0 6px; font-size: 1.15rem; font-weight: 700; background: #fafaf9;
+    }
+
+    .cell-char { position: relative; z-index: 2; font-size: 1.85rem; font-weight: 900; line-height: 1; }
+    .cell-char.trace { color: #cbd5e1; -webkit-print-color-adjust: exact; }
+    .cell-char.blank { display: none; }
+
+    /* 2択用スタイル */
+    .choice-group { display: flex; gap: 8px; font-size: 1.05rem; }
+    .choice-btn {
+      padding: 4px 10px; border: 1.5px solid var(--border-mid); border-radius: 6px;
+      background: #fafaf9; font-weight: 700; display: inline-flex; align-items: center;
+    }
+    .choice-btn.trace-correct { border-color: var(--accent); background: var(--accent-soft); }
+
+    /* 読みヒント */
+    .yomi-ruby { font-size: 0.72rem; color: var(--text-sub); margin-left: 4px; font-weight: 500; }
+
+    /* 右端：折って隠す自己採点欄 */
+    .fold-cut-zone {
+      width: 82px; margin-left: 10px; border-left: 2px dashed #94a3b8; padding-left: 10px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .fold-label { font-size: 0.58rem; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
+    .ans-char { font-size: 1.02rem; font-weight: 900; color: var(--ans-red); line-height: 1.2; text-align: center; }
+
+    /* フッター */
+    .sheet-footer { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-soft);
+      display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); }
+
+    /* ドロワー（モバイル） */
+    .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 35; }
+    .drawer-close { display: none; }
+
+    /* ====== 印刷用設定 ====== */
+    @media print {
+      @page { size: A4 portrait; margin: 0; }
+      body { background: #fff !important; }
+      .sidebar, .top-toolbar, .no-print { display: none !important; }
+      .main-wrap { margin-left: 0 !important; }
+      .content-area { padding: 0 !important; }
+      .print-sheet {
+        box-shadow: none !important; margin: 0 !important;
+        width: 210mm !important; height: 297mm !important; max-height: 297mm !important;
+        page-break-after: always; break-after: page;
+        padding: 12mm 14mm 10mm !important;
+      }
+      .cell-char.trace { color: #cbd5e1 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .sheet-level-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.2s; }
+      body.drawer-open .sidebar { transform: translateX(0); }
+      body.drawer-open .drawer-overlay { display: block; }
+      .main-wrap { margin-left: 0; }
+      .drawer-toggle { display: block; }
+      .drawer-close { display: block; position: absolute; right: 12px; top: 12px; font-size: 1.4rem; background: none; border: none; cursor: pointer; }
+    }
+  </style>
+</head>
+<body>
+  <div class="drawer-overlay" onclick="closeDrawer()"></div>
+
+  <aside class="sidebar no-print" id="sidebar">
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="閉じる">×</button>
+    <div class="brand-box">
+      <div class="subject-switch">
+        <a href="../index.html">算数</a>
+        <a href="kanji-yomi.html">国語（読み）</a>
+        <a href="kanji-kaki.html">国語（単語）</a>
+        <a href="kanji-bun.html">国語（短文）</a>
+        <a href="kanji-diff.html">国語（見分け）</a>
+        <a href="kanji-okurigana.html" class="active">送りがな</a>
+        <a href="kanji-puzzle.html">合体パズル</a>
+      </div>
+      <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
+      <div class="brand-main">ゆっくり・すっきり<br/>おくりがな マスター</div>
+      <div class="brand-count" id="unitCountLabel">読み込み中...</div>
+      <div class="brand-note">
+        <p><strong>特別支援・つまずき解消</strong></p>
+        <p>動詞の活用、名詞化、境界の弁別など、つまずきやすい送りがなに特化したステッププリントです。</p>
+      </div>
+    </div>
+
+    <div class="unit-list" id="unitList"></div>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="top-toolbar no-print">
+      <div class="toolbar-left">
+        <button class="drawer-toggle" onclick="openDrawer()">単元を選ぶ</button>
+        <div class="level-tabs">
+          <button class="level-tab active" id="tab-step1" onclick="setStep('step1')">ステップ1（なぞり・ヒント）</button>
+          <button class="level-tab" id="tab-step2" onclick="setStep('step2')">ステップ2（じぶんで書く）</button>
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn" onclick="copyUnitLink()">リンク共有</button>
+        <button class="btn btn-primary" onclick="window.print()">印刷する</button>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <div id="sheetContainer"></div>
+    </main>
+  </div>
+
+  <div id="toastBox" style="display:none;position:fixed;bottom:24px;right:24px;background:#18181b;color:#fff;padding:10px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;z-index:99;box-shadow:0 4px 12px rgba(0,0,0,0.15);"></div>
+
+  <script src="kanji-okurigana-data.js"></script>
+  <script>
+    const state = {
+      unit: "ok3-01",
+      step: "step1"
+    };
+
+    function getUnit(id) {
+      return OKURIGANA_UNITS.find(u => u.id === id) || OKURIGANA_UNITS[0];
+    }
+
+    function setStep(s) {
+      state.step = s;
+      document.querySelectorAll(".level-tab").forEach(t => {
+        t.classList.toggle("active", t.id === `tab-${s}`);
+      });
+      render();
+    }
+
+    function selectUnit(id) {
+      state.unit = id;
+      updateUnitListActive();
+      render();
+      closeDrawer();
+    }
+
+    function render() {
+      const u = getUnit(state.unit);
+      const container = document.getElementById("sheetContainer");
+      const isTrace = (state.step === "step1");
+
+      const stepBadgeText = isTrace ? "ステップ1：なぞって覚える" : "ステップ2：じぶんで書く";
+      const leadText = isTrace 
+        ? `${u.lead}（うすい文字を なぞりながら 声に出して 読もう）`
+        : `${u.lead}（じぶんで 正しく 書こう。おわったら 右をおって 答え合わせ）`;
+
+      let rowsHtml = "";
+      u.items.forEach((item, idx) => {
+        const qNum = idx + 1;
+        const pairTagHtml = item.pair_label ? `<span class="q-pair-tag">${item.pair_label}</span>` : "";
+
+        // 2択問題の場合
+        if (item.choices) {
+          const choiceHtml = item.choices.map((c, cIdx) => {
+            const isCorrect = (cIdx === item.correct_idx);
+            const traceCls = (isTrace && isCorrect) ? "trace-correct" : "";
+            return `<span class="choice-btn ${traceCls}">${c}</span>`;
+          }).join(" ");
+
+          rowsHtml += `
+            <div class="q-row">
+              <div class="q-num">${qNum}</div>
+              <div class="q-sentence-box">
+                ${pairTagHtml}
+                <span>${item.q}</span>
+                <span class="yomi-ruby">［${item.yomi}］</span>
+              </div>
+              <div class="choice-group">
+                ${choiceHtml}
+              </div>
+              <div class="fold-cut-zone">
+                <div class="fold-label">こたえ</div>
+                <div class="ans-char">${item.ans}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          // マス目書き込み形式
+          const kanjiCharClass = isTrace ? "cell-char trace" : "cell-char blank";
+          const okuriText = isTrace ? item.okuri : (item.okuri ? "" : "");
+          // okuri-cellの内容
+          const okuriCellContent = isTrace 
+            ? `<span style="color:#cbd5e1;font-weight:900;">${item.okuri}</span>`
+            : "";
+
+          rowsHtml += `
+            <div class="q-row">
+              <div class="q-num">${qNum}</div>
+              <div class="q-sentence-box">
+                ${pairTagHtml}
+                <span>${item.q}</span>
+                <span class="yomi-ruby">［${item.yomi}］</span>
+              </div>
+              <div class="q-inputs">
+                <div class="kanji-cell">
+                  <span class="${kanjiCharClass}">${item.kanji}</span>
+                </div>
+                ${item.okuri ? `<div class="okuri-cell" title="送りがな">${okuriCellContent}</div>` : ""}
+              </div>
+              <div class="fold-cut-zone">
+                <div class="fold-label">こたえ</div>
+                <div class="ans-char">${item.ans}</div>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      container.innerHTML = `
+        <div class="print-sheet">
+          <div class="sheet-header">
+            <div class="sheet-title-box">
+              <div class="sheet-unit-kicker">小学3年生 国語（送りがなマスター） ・ 第${u.no}回</div>
+              <h1 class="sheet-title">${u.title}</h1>
+              <span class="sheet-level-badge">${stepBadgeText}</span>
+            </div>
+            <div class="sheet-meta">
+              <div class="meta-box">月　　日</div>
+              <div class="meta-box name-box">なまえ：</div>
+            </div>
+          </div>
+          <div class="sheet-lead">${leadText}</div>
+          <div class="q-grid">${rowsHtml}</div>
+          <div class="sheet-footer">
+            <span>© ゆっくり・すっきり こくごプリント（送りがな特化）</span>
+            <span>右はしを山折りにすると、答えをかくして練習できます</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function buildUnitList() {
+      const listEl = document.getElementById("unitList");
+      document.getElementById("unitCountLabel").textContent = `全 ${OKURIGANA_UNITS.length} 単元（3年生・全問）`;
+
+      let html = `<div class="cat-group"><div class="cat-group-title">3年生 送りがなマスター</div>`;
+      OKURIGANA_UNITS.forEach(u => {
+        const isActive = (u.id === state.unit);
+        html += `
+          <button class="unit-btn ${isActive ? "active" : ""}" onclick="selectUnit('${u.id}')">
+            <span class="unit-no-tag">第${u.no}回</span>
+            <div>
+              <div class="unit-name">${u.title}</div>
+              <div class="unit-sub">${u.sub}</div>
+            </div>
+          </button>
+        `;
+      });
+      html += `</div>`;
+      listEl.innerHTML = html;
+    }
+
+    function updateUnitListActive() {
+      document.querySelectorAll(".unit-btn").forEach(b => {
+        const isThis = b.getAttribute("onclick").includes(`'${state.unit}'`);
+        b.classList.toggle("active", isThis);
+      });
+    }
+
+    function openDrawer() { document.body.classList.add("drawer-open"); }
+    function closeDrawer() { document.body.classList.remove("drawer-open"); }
+
+    function copyUnitLink() {
+      const url = `${location.origin}${location.pathname}?u=${state.unit}&s=${state.step}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast("単元のURLをコピーしました");
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toastBox");
+      t.textContent = msg; t.style.display = "block";
+      setTimeout(() => { t.style.display = "none"; }, 2400);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(location.search);
+      if (params.get("u")) state.unit = params.get("u");
+      if (params.get("s")) state.step = params.get("s");
+
+      buildUnitList();
+      setStep(state.step);
+    });
+  </script>
+</body>
+</html>

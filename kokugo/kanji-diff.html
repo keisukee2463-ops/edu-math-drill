@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ゆっくり・すっきり にたかんじ えらびプリント（3年）</title>
+  <style>
+    :root {
+      --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
+      --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
+      --border-soft: #e7e5e4; --border-mid: #d6d3d1;
+      --accent: #2c5e4f; --accent-soft: #eaf2ef; --ink: #18181b; --ans-red: #c2410c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--bg-app); color: var(--text-main);
+      display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ====== サイドバー ====== */
+    .sidebar { width: 310px; background: var(--bg-panel); border-right: 1px solid var(--border-soft);
+      display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; overflow-y: auto; }
+    .brand-box { padding: 18px 16px 14px; border-bottom: 1px solid var(--border-soft); }
+    .subject-switch { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .subject-switch a { flex: 1 1 30%; text-align: center; text-decoration: none; font-size: 0.68rem; font-weight: 700;
+      padding: 5px 2px; border-radius: 5px; color: var(--text-sub); background: var(--bg-subtle); white-space: nowrap; }
+    .subject-switch a.active { background: var(--text-main); color: #fff; }
+    .brand-kicker { font-size: 0.66rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 3px; }
+    .brand-main { font-size: 0.98rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1.35; }
+    .brand-count { font-size: 0.7rem; color: var(--text-sub); margin-top: 3px; font-weight: 600; }
+    .brand-note { font-size: 0.68rem; color: var(--text-sub); line-height: 1.5; margin-top: 8px; padding: 7px 9px;
+      background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; }
+
+    .grade-filter { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 12px; border-bottom: 1px solid var(--border-soft); background: #fafaf9; position: sticky; top: 0; z-index: 5; }
+    .grade-chip { border: 1px solid transparent; background: transparent; color: var(--text-sub); font-size: 0.72rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+    .grade-chip:hover { background: var(--bg-subtle); }
+    .grade-chip.active { background: var(--text-main); color: #fff; }
+
+    .unit-list { padding: 12px 10px 32px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .cat-group-title { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: 0.05em;
+      margin-bottom: 6px; padding-left: 6px; border-left: 3px solid var(--accent); }
+    .unit-btn { width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 7px;
+      padding: 7px 9px; margin-bottom: 2px; cursor: pointer; display: flex; align-items: flex-start; gap: 7px; font-family: inherit; }
+    .unit-btn:hover { background: #fafaf9; border-color: var(--border-soft); }
+    .unit-btn.active { background: var(--accent-soft); border-color: #b7d4cb; }
+    .unit-grade-tag { font-size: 0.64rem; font-weight: 700; padding: 2px 5px; border-radius: 4px;
+      background: var(--bg-subtle); color: var(--text-sub); white-space: nowrap; margin-top: 1px; }
+    .unit-btn.active .unit-grade-tag { background: var(--accent); color: #fff; }
+    .unit-name { font-size: 0.78rem; font-weight: 700; line-height: 1.35; }
+    .unit-sub { font-size: 0.68rem; color: var(--text-sub); margin-top: 2px; }
+
+    /* ====== メイン・ツールバー ====== */
+    .main-area { margin-left: 310px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .top-toolbar { background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border-soft);
+      padding: 12px 28px; position: sticky; top: 0; z-index: 30; }
+    .toolbar-inner { max-width: 960px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 12px; }
+    .step-pills { display: inline-flex; background: var(--bg-subtle); padding: 3px; border-radius: 8px; gap: 2px; }
+    .step-pill { border: none; background: transparent; padding: 6px 13px; border-radius: 6px; font-size: 0.8rem;
+      font-weight: 700; color: var(--text-sub); cursor: pointer; font-family: inherit; }
+    .step-pill.active { background: #fff; color: var(--text-main); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .step-pill .pill-sub { font-size: 0.68rem; color: var(--text-sub); font-weight: 500; margin-left: 3px; }
+    .step-pill.active .pill-sub { color: var(--accent); }
+
+    .mobile-unit-bar, .drawer-close, .drawer-backdrop { display: none; }
+    .toolbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 7px 13px; border-radius: 7px; border: 1px solid var(--border-mid); background: #fff; color: var(--text-main);
+      font-weight: 700; font-size: 0.81rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
+    .btn:hover { background: #fafaf9; border-color: #a8a29e; }
+    .btn.on { background: var(--accent-soft); border-color: #b7d4cb; color: var(--accent); }
+    .btn-print { background: var(--accent); color: #fff; border-color: var(--accent); padding: 7px 16px; }
+    .btn-print:hover { background: #234b3f; border-color: #234b3f; }
+    .btn-all-print { background: #0f766e; color: #fff; border-color: #0f766e; padding: 7px 16px; }
+    .btn-all-print:hover { background: #115e59; border-color: #115e59; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text-main); color: #fff; padding: 10px 16px;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: none; z-index: 100; }
+    .preview-workspace { padding: 28px 24px 64px; flex: 1; }
+    #sheetsContainer { display: flex; flex-direction: column; gap: 32px; }
+
+    /* ====== A4 プリント紙面 ====== */
+    .sheet { width: 210mm; min-height: 282mm; margin: 0 auto; background: #fff; padding: 10mm 13mm;
+      box-shadow: 0 2px 12px rgba(28,25,23,0.06), 0 0 1px rgba(28,25,23,0.12); display: flex; flex-direction: column; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end;
+      border-bottom: 1.5px solid var(--ink); padding-bottom: 5px; margin-bottom: 8px; }
+    .sheet-title-wrap { display: flex; align-items: baseline; gap: 10px; }
+    .sheet-title { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.05em; }
+    .sheet-step-badge { font-size: 0.74rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #f4f4f5;
+      border: 1px solid #71717a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet-page-num { font-size: 0.8rem; color: #71717a; font-weight: 600; }
+    .name-line { font-size: 0.94rem; border-bottom: 1px solid var(--ink); width: 195px; padding-bottom: 3px; letter-spacing: 0.05em; }
+    
+    .guide-box { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .guide { font-size: 0.82rem; color: var(--text-sub); }
+
+    /* 見分けポイント（フォーカスカード） */
+    .focus-card { background: #fafaf9; border: 1.2px solid var(--ink); border-radius: 6px; padding: 6px 12px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .focus-badge { font-size: 0.7rem; font-weight: 800; background: var(--ink); color: #fff; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+    .focus-text { font-size: 0.86rem; font-weight: 700; color: var(--ink); letter-spacing: 0.03em; }
+
+    /* 問題行グリッド（問題 + 折って隠す答え欄） */
+    .rows { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .row { display: grid; grid-template-columns: 1fr 38mm; align-items: stretch; min-height: 27mm; border-bottom: 1px dashed #d4d4d8; }
+    .row:last-child { border-bottom: none; }
+    .no-fold .row { grid-template-columns: 1fr; }
+    .no-fold .ans-cell { display: none; }
+
+    /* 問題本体 */
+    .item-body { padding: 4px 6px 4px 0; display: flex; flex-direction: column; justify-content: center; }
+    .item-num { font-size: 0.95rem; font-weight: 800; color: var(--ink); margin-right: 6px; }
+    .item-sent-wrap { font-size: 1.28rem; line-height: 1.8; letter-spacing: 0.03em; color: var(--ink); display: flex; align-items: center; flex-wrap: wrap; }
+
+    /* ステップ1：2択の選択肢（大きな丸つけ枠） */
+    .choice-box-step1 { display: inline-flex; align-items: center; gap: 4px; border: 1.5px solid #71717a; border-radius: 8px;
+      padding: 2px 8px; margin: 0 4px; background: #fff; position: relative; }
+    .choice-ruby { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 0.68rem; font-weight: 700; color: var(--text-sub); }
+    .choice-opt { font-size: 1.6rem; font-weight: 700; width: 34px; height: 38px; display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%; cursor: pointer; border: 1.5px dashed transparent; }
+    .choice-sep { font-size: 1.1rem; color: #a1a1aa; margin: 0 1px; }
+
+    /* ステップ2・3：文中の十字リーダーマス */
+    .inline-cell-wrap { display: inline-flex; flex-direction: column; align-items: center; margin: 0 5px; vertical-align: middle; position: relative; }
+    .cell-ruby { font-size: 0.72rem; font-weight: 700; color: var(--text-sub); line-height: 1.1; margin-bottom: 2px; }
+    .cell-box { width: 14mm; height: 14mm; border: 1.5px solid var(--ink); position: relative; background: #fff;
+      display: inline-flex; align-items: center; justify-content: center; }
+    /* 十字リーダー（点線） */
+    .cell-box::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 1px dotted #a1a1aa; }
+    .cell-box::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 0; border-top: 1px dotted #a1a1aa; }
+    .cell-char { position: relative; z-index: 2; font-size: 1.7rem; font-weight: 700; font-family: inherit; }
+    .cell-char.trace { color: #d4d4d8; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .cell-char.blank { display: none; }
+
+    /* ステップ2・3の2択ヒント枠 */
+    .choice-hint-tag { display: inline-flex; align-items: center; gap: 4px; border: 1.2px solid #a1a1aa; border-radius: 6px;
+      padding: 1px 7px; margin-left: 10px; font-size: 1.15rem; font-weight: 700; color: var(--text-sub); background: #fafaf9; }
+    .choice-hint-tag .hint-label { font-size: 0.65rem; color: #71717a; font-weight: 600; margin-right: 2px; }
+
+    /* こたえ欄（右端・折って隠す） */
+    .ans-cell { border-left: 1.5px dashed #71717a; padding: 2px 2px 2px 3.5mm; display: flex; flex-direction: column;
+      justify-content: center; line-height: 1.35; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ans-head { font-size: 0.68rem; color: #71717a; font-weight: 700; margin-bottom: 3px; }
+    .ans-main-wrap { display: flex; align-items: baseline; gap: 4px; margin-bottom: 2px; }
+    .ans-char { font-size: 1.5rem; font-weight: 800; color: var(--ans-red); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ans-yomi { font-size: 0.8rem; font-weight: 700; color: var(--ink); }
+    .ans-point { font-size: 0.68rem; color: var(--text-sub); line-height: 1.35; }
+
+    /* ====== 印刷用CSS ====== */
+    @media print {
+      body { background: #fff; display: block; }
+      .sidebar, .top-toolbar, .toast { display: none !important; }
+      .main-area { margin-left: 0 !important; width: 100% !important; }
+      .preview-workspace { padding: 0 !important; }
+      #sheetsContainer { gap: 0 !important; }
+      .sheet { width: 100% !important; min-height: 0 !important; height: auto !important; margin: 0 !important;
+        padding: 9mm 12mm 8mm !important; box-shadow: none !important; page-break-after: always; break-after: page; }
+      .sheet:last-child { page-break-after: avoid; break-after: avoid; }
+      @page { size: A4 portrait; margin: 0; }
+    }
+
+    /* ====== レスポンシブ ====== */
+    @media (max-width: 860px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.25s ease; }
+      body.drawer-open .sidebar { transform: translateX(0); }
+      body.drawer-open .drawer-backdrop { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 35; }
+      .drawer-close { display: block; position: absolute; top: 12px; right: 12px; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
+      .main-area { margin-left: 0; }
+      .mobile-unit-bar { display: flex; align-items: center; gap: 10px; width: 100%; }
+      .current-unit-name { font-size: 0.84rem; font-weight: 700; flex: 1; }
+      .top-toolbar { padding: 8px 12px; }
+      .toolbar-inner { gap: 8px; }
+      .preview-workspace { padding: 12px 6px 40px; }
+      .sheet { transform-origin: top center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="drawer-backdrop" onclick="closeDrawer()"></div>
+
+  <!-- サイドバー -->
+  <aside class="sidebar">
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="閉じる">×</button>
+    <div class="brand-box">
+      <div class="subject-switch">
+        <a href="../index.html">算数</a>
+        <a href="kanji-yomi.html">国語（読み）</a>
+        <a href="kanji-kaki.html">国語（単語）</a>
+        <a href="kanji-bun.html">国語（短文）</a>
+        <a href="kanji-diff.html" class="active">国語（見分け）</a>
+        <a href="kanji-okurigana.html">送りがな</a>
+        <a href="kanji-puzzle.html">合体パズル</a>
+      </div>
+      <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
+      <div class="brand-main">ゆっくり・すっきり<br/>にたかんじ えらびプリント</div>
+      <div class="brand-count" id="unitCountLabel">全 10 単元（3年配当漢字中心）</div>
+      <div class="brand-note">
+        <p>・<strong>ステップ1</strong>：2択からえらんで○をつける（書く負担ゼロ・視覚弁別）。</p>
+        <p>・<strong>ステップ2</strong>：2択を見比べ、うすいお手本をなぞって書く。</p>
+        <p>・<strong>ステップ3</strong>：文脈から判断し、自力でマスに書く。</p>
+        <p>・<strong>右端のこたえ欄</strong>：折って隠して自力採点できます。</p>
+      </div>
+    </div>
+
+    <div class="grade-filter">
+      <button class="grade-chip" id="chip-all" onclick="filterGrade('all', this)">すべて</button>
+      <button class="grade-chip active" id="chip-3" onclick="filterGrade('3', this)">3年</button>
+    </div>
+
+    <div class="unit-list" id="unitListContainer"></div>
+  </aside>
+
+  <!-- メインエリア -->
+  <div class="main-area">
+    <header class="top-toolbar no-print">
+      <div class="toolbar-inner">
+        <div class="mobile-unit-bar">
+          <button class="btn btn-menu" onclick="openDrawer()" aria-label="教材を選ぶ">☰ 単元一覧</button>
+          <div class="current-unit-name" id="currentUnitName"></div>
+        </div>
+
+        <div class="step-pills">
+          <button class="step-pill active" id="pill-step1" onclick="setStep('step1')">ステップ1<span class="pill-sub">（えらんで○）</span></button>
+          <button class="step-pill" id="pill-step2" onclick="setStep('step2')">ステップ2<span class="pill-sub">（えらんでなぞる）</span></button>
+          <button class="step-pill" id="pill-step3" onclick="setStep('step3')">ステップ3<span class="pill-sub">（じぶんで書く）</span></button>
+          <button class="step-pill" id="pill-all" onclick="setStep('all')">全ステップ<span class="pill-sub">（1〜3一括）</span></button>
+        </div>
+
+        <div class="toolbar-actions">
+          <button class="btn" onclick="shuffleChoices()">選択肢の順をシャッフル</button>
+          <button class="btn on" id="btnFold" onclick="toggleFold()">こたえ欄（折って隠す）</button>
+          <button class="btn" onclick="copyUnitLink()" title="この単元のURLをコピー">URLコピー</button>
+          <button class="btn btn-all-print" onclick="printAll()" title="ステップ1・2・3をまとめて印刷">単元一括印刷（1〜3）</button>
+          <button class="btn btn-print" onclick="window.print()">A4で印刷</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="preview-workspace">
+      <div id="sheetsContainer"></div>
+    </main>
+  </div>
+
+  <div class="toast" id="toastBox"></div>
+
+  <!-- データ読み込み -->
+  <script src="kanji3-diff-data.js"></script>
+  <script>
+    const ALL_DIFF_UNITS = [...KANJI_DIFF_UNITS_G3];
+
+    const STEP_INFO = {
+      step1: {
+        badge: "ステップ1",
+        sub: "えらんで ○をつける",
+        guide: "正しい かんじに ○を つけよう。おわったら みぎがわを おって こたえあわせ。"
+      },
+      step2: {
+        badge: "ステップ2",
+        sub: "えらんで なぞる",
+        guide: "［　］から 正しいほうを えらび、マスの うすい かんじを なぞろう。"
+      },
+      step3: {
+        badge: "ステップ3",
+        sub: "じぶんで 書く",
+        guide: "ぶんを よくよんで、［　］から 正しい かんじを えらんで マスに かこう。"
+      }
+    };
+
+    let state = {
+      unit: "diff3-01",
+      gradeFilter: "3",
+      level: "step1",
+      shuffleOrder: false,
+      fold: true
+    };
+
+    function esc(s) {
+      return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    }
+
+    function getUnit(id) {
+      return ALL_DIFF_UNITS.find(u => u.id === id) || ALL_DIFF_UNITS[0];
+    }
+
+    /* シート単体のHTML生成 */
+    function renderSingleSheet(unit, level, pageLabel) {
+      const info = STEP_INFO[level] || STEP_INFO.step1;
+      const foldClass = state.fold ? "" : "no-fold";
+
+      let rowsHtml = "";
+      unit.items.forEach((item, idx) => {
+        const num = idx + 1;
+        // 選択肢の表示順（シャッフル設定）
+        let choices = [...item.pair];
+        if (state.shuffleOrder && (idx % 2 === 1)) {
+          choices.reverse();
+        }
+
+        let sentInnerHtml = "";
+        if (level === "step1") {
+          // ステップ1：文中の2択に○をつける
+          const opt1 = esc(choices[0]);
+          const opt2 = esc(choices[1]);
+          sentInnerHtml = `${esc(item.sentPre)} ` +
+            `<span class="choice-box-step1">` +
+              `<span class="choice-ruby">${esc(item.yomi)}</span>` +
+              `<span class="choice-opt">${opt1}</span>` +
+              `<span class="choice-sep">／</span>` +
+              `<span class="choice-opt">${opt2}</span>` +
+            `</span> ` +
+            `${esc(item.sentPost)}`;
+        } else if (level === "step2") {
+          // ステップ2：文中のマス（うすいお手本文字）＋選択肢ヒント
+          sentInnerHtml = `${esc(item.sentPre)} ` +
+            `<span class="inline-cell-wrap">` +
+              `<span class="cell-ruby">${esc(item.yomi)}</span>` +
+              `<span class="cell-box"><span class="cell-char trace">${esc(item.ans)}</span></span>` +
+            `</span> ` +
+            `${esc(item.sentPost)}` +
+            `<span class="choice-hint-tag"><span class="hint-label">えらぶ:</span>［ ${esc(choices.join(" ／ "))} ］</span>`;
+        } else {
+          // ステップ3：文中のマス（空欄・自力）＋選択肢ヒント
+          sentInnerHtml = `${esc(item.sentPre)} ` +
+            `<span class="inline-cell-wrap">` +
+              `<span class="cell-ruby">${esc(item.yomi)}</span>` +
+              `<span class="cell-box"><span class="cell-char blank"></span></span>` +
+            `</span> ` +
+            `${esc(item.sentPost)}` +
+            `<span class="choice-hint-tag"><span class="hint-label">えらぶ:</span>［ ${esc(choices.join(" ／ "))} ］</span>`;
+        }
+
+        // こたえ欄
+        const ansHtml = `
+          <div class="ans-cell">
+            <div class="ans-head">(${num}) こたえ</div>
+            <div class="ans-main-wrap">
+              <span class="ans-char">${esc(item.ans)}</span>
+              <span class="ans-yomi">（${esc(item.yomi)}）</span>
+            </div>
+            <div class="ans-point">${esc(item.point)}</div>
+          </div>
+        `;
+
+        rowsHtml += `
+          <div class="row">
+            <div class="item-body">
+              <div class="item-sent-wrap">
+                <span class="item-num">(${num})</span>
+                ${sentInnerHtml}
+              </div>
+            </div>
+            ${ansHtml}
+          </div>
+        `;
+      });
+
+      return `
+        <section class="sheet ${foldClass}">
+          <header class="sheet-header">
+            <div class="sheet-title-wrap">
+              <div class="sheet-title">にたかんじ えらび <span>${esc(unit.no)}</span></div>
+              <span class="sheet-step-badge">${esc(info.badge)}：${esc(info.sub)}</span>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:16px;">
+              <div class="name-line">なまえ：</div>
+              <span class="sheet-page-num">${pageLabel}</span>
+            </div>
+          </header>
+
+          <div class="guide-box">
+            <div class="guide">${esc(info.guide)}</div>
+          </div>
+
+          <div class="focus-card">
+            <span class="focus-badge">ちゅうもく！</span>
+            <span class="focus-text">${esc(unit.focus)}</span>
+          </div>
+
+          <div class="rows">
+            ${rowsHtml}
+          </div>
+        </section>
+      `;
+    }
+
+    /* 全体再描画 */
+    function render() {
+      const u = getUnit(state.unit);
+      const container = document.getElementById("sheetsContainer");
+      document.getElementById("currentUnitName").textContent = `にたかんじ えらび ${u.no}：${u.title}`;
+
+      if (state.level === "all") {
+        container.innerHTML =
+          renderSingleSheet(u, "step1", "1/3") +
+          renderSingleSheet(u, "step2", "2/3") +
+          renderSingleSheet(u, "step3", "3/3");
+      } else {
+        container.innerHTML = renderSingleSheet(u, state.level, "1/1");
+      }
+      adjustMobileFit();
+    }
+
+    function setStep(lvl) {
+      state.level = lvl;
+      document.querySelectorAll(".step-pill").forEach(p => p.classList.remove("active"));
+      const target = document.getElementById(`pill-${lvl}`);
+      if (target) target.classList.add("active");
+      render();
+    }
+
+    function toggleFold() {
+      state.fold = !state.fold;
+      const btn = document.getElementById("btnFold");
+      if (btn) btn.classList.toggle("on", state.fold);
+      render();
+    }
+
+    function shuffleChoices() {
+      state.shuffleOrder = !state.shuffleOrder;
+      showToast(state.shuffleOrder ? "選択肢の順をシャッフルしました" : "選択肢の順を元に戻しました");
+      render();
+    }
+
+    function selectUnit(id) {
+      state.unit = id;
+      updateUnitListActive();
+      render();
+      closeDrawer();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function filterGrade(grade, btnEl) {
+      state.gradeFilter = grade;
+      document.querySelectorAll(".grade-chip").forEach(c => c.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+      buildUnitList();
+    }
+
+    function buildUnitList() {
+      const listEl = document.getElementById("unitListContainer");
+      const filtered = state.gradeFilter === "all"
+        ? ALL_DIFF_UNITS
+        : ALL_DIFF_UNITS.filter(u => u.grade === state.gradeFilter);
+
+      const countEl = document.getElementById("unitCountLabel");
+      if (countEl) countEl.textContent = `全 ${ALL_DIFF_UNITS.length} 単元（現在 ${filtered.length} 単元表示）`;
+
+      let html = `<div class="cat-group"><div class="cat-group-title">3年生の漢字（似ている漢字・見分け）</div>`;
+      filtered.forEach(u => {
+        const isActive = (u.id === state.unit);
+        html += `<button class="unit-btn ${isActive ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
+                `<span class="unit-grade-tag">3年-${u.no}</span>` +
+                `<div><div class="unit-name">${esc(u.title)}</div><div class="unit-sub">${esc(u.focus)}</div></div>` +
+                `</button>`;
+      });
+      html += `</div>`;
+      listEl.innerHTML = html;
+    }
+
+    function updateUnitListActive() {
+      document.querySelectorAll(".unit-btn").forEach(b => {
+        const isThis = b.getAttribute("onclick").includes(`'${state.unit}'`);
+        b.classList.toggle("active", isThis);
+      });
+    }
+
+    function openDrawer() { document.body.classList.add("drawer-open"); }
+    function closeDrawer() { document.body.classList.remove("drawer-open"); }
+
+    function copyUnitLink() {
+      const url = `${location.origin}${location.pathname}?u=${state.unit}&l=${state.level}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast("単元のURLをコピーしました");
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toastBox");
+      t.textContent = msg; t.style.display = "block";
+      setTimeout(() => { t.style.display = "none"; }, 2400);
+    }
+
+    function printAll() {
+      const prev = state.level;
+      state.level = "all";
+      render();
+      window.print();
+      state.level = prev;
+      render();
+    }
+
+    function adjustMobileFit() {
+      if (window.innerWidth <= 860) {
+        const ws = document.querySelector('.preview-workspace');
+        if (!ws) return;
+        const availableWidth = ws.clientWidth - 12;
+        const scale = Math.min(0.44, (availableWidth - 16) / 810);
+        document.querySelectorAll('.sheet').forEach(s => {
+          s.style.zoom = scale;
+        });
+      } else {
+        document.querySelectorAll('.sheet').forEach(s => {
+          s.style.zoom = '';
+        });
+      }
+    }
+    window.addEventListener('resize', adjustMobileFit);
+
+    // 初期化
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(location.search);
+      if (params.get("u")) state.unit = params.get("u");
+      if (params.get("l")) state.level = params.get("l");
+
+      buildUnitList();
+      setStep(state.level);
+    });
+  </script>
+</body>
+</html>
