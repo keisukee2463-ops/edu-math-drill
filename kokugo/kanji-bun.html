@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ゆっくり・すっきり たんぶん かんじプリント（短文で書く）</title>
+  <style>
+    :root {
+      --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
+      --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
+      --border-soft: #e7e5e4; --border-mid: #d6d3d1;
+      --accent: #2c5e4f; --accent-soft: #eaf2ef; --ink: #18181b; --ans-red: #c2410c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--bg-app); color: var(--text-main);
+      display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ====== サイドバー ====== */
+    .sidebar { width: 300px; background: var(--bg-panel); border-right: 1px solid var(--border-soft);
+      display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; overflow-y: auto; }
+    .brand-box { padding: 20px 18px 16px; border-bottom: 1px solid var(--border-soft); }
+    .subject-switch { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+    .subject-switch a { flex: 1 0 auto; text-align: center; text-decoration: none; font-size: 0.7rem; font-weight: 700;
+      padding: 5px 6px; border-radius: 6px; color: var(--text-sub); background: var(--bg-subtle); }
+    .subject-switch a.active { background: var(--text-main); color: #fff; }
+    .brand-kicker { font-size: 0.68rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .brand-main { font-size: 1.02rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1.35; }
+    .brand-count { font-size: 0.72rem; color: var(--text-sub); margin-top: 4px; font-weight: 600; }
+    .brand-note { font-size: 0.68rem; color: var(--text-sub); line-height: 1.55; margin-top: 10px; padding: 8px 10px;
+      background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; }
+    .brand-note p + p { margin-top: 4px; }
+    .grade-filter { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--border-soft); background: #fafaf9; position: sticky; top: 0; z-index: 5; }
+    .grade-chip { border: 1px solid transparent; background: transparent; color: var(--text-sub); font-size: 0.72rem; font-weight: 700; padding: 4px 6px; border-radius: 6px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex: 1 0 auto; text-align: center; }
+    .grade-chip:hover { background: var(--bg-subtle); }
+    .grade-chip.active { background: var(--text-main); color: #fff; }
+    .unit-list { padding: 14px 12px 32px; display: flex; flex-direction: column; gap: 18px; flex: 1; }
+    .cat-group-title { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: 0.05em;
+      margin-bottom: 6px; padding-left: 6px; border-left: 3px solid var(--accent); }
+    .unit-btn { width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 7px;
+      padding: 7px 9px; margin-bottom: 2px; cursor: pointer; display: flex; align-items: flex-start; gap: 7px; font-family: inherit; }
+    .unit-btn:hover { background: #fafaf9; border-color: var(--border-soft); }
+    .unit-btn.active { background: var(--accent-soft); border-color: #b7d4cb; }
+    .unit-grade-tag { font-size: 0.64rem; font-weight: 700; padding: 2px 5px; border-radius: 4px;
+      background: var(--bg-subtle); color: var(--text-sub); white-space: nowrap; margin-top: 1px; }
+    .unit-btn.active .unit-grade-tag { background: var(--accent); color: #fff; }
+    .unit-name { font-size: 0.8rem; font-weight: 700; line-height: 1.35; }
+
+    /* ====== メイン・ツールバー ====== */
+    .main-area { margin-left: 300px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .top-toolbar { background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border-soft);
+      padding: 12px 28px; position: sticky; top: 0; z-index: 30; }
+    .toolbar-inner { max-width: 940px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 12px; }
+    .step-pills { display: inline-flex; background: var(--bg-subtle); padding: 3px; border-radius: 8px; gap: 2px; }
+    .step-pill { border: none; background: transparent; padding: 6px 13px; border-radius: 6px; font-size: 0.8rem;
+      font-weight: 700; color: var(--text-sub); cursor: pointer; font-family: inherit; }
+    .step-pill.active { background: #fff; color: var(--text-main); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .mobile-unit-bar, .drawer-close, .drawer-backdrop { display: none; }
+    .toolbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 7px 13px; border-radius: 7px; border: 1px solid var(--border-mid); background: #fff; color: var(--text-main);
+      font-weight: 700; font-size: 0.81rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; }
+    .btn:hover { background: #fafaf9; border-color: #a8a29e; }
+    .btn.on { background: var(--accent-soft); border-color: #b7d4cb; color: var(--accent); }
+    .btn-print { background: var(--accent); color: #fff; border-color: var(--accent); padding: 7px 16px; }
+    .btn-print:hover { background: #234b3f; border-color: #234b3f; }
+    .btn-all-print { background: #0f766e; color: #fff; border-color: #0f766e; padding: 7px 16px; }
+    .btn-all-print:hover { background: #115e59; border-color: #115e59; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text-main); color: #fff; padding: 10px 16px;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600; display: none; z-index: 100; }
+    .preview-workspace { padding: 28px 24px 64px; flex: 1; }
+    #sheetsContainer { display: flex; flex-direction: column; gap: 32px; }
+
+    /* ====== A4 プリント紙面 ====== */
+    .sheet { width: 210mm; min-height: 280mm; margin: 0 auto; background: #fff; padding: 12mm 15mm;
+      box-shadow: 0 2px 12px rgba(28,25,23,0.06), 0 0 1px rgba(28,25,23,0.12); display: flex; flex-direction: column; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end;
+      border-bottom: 1.5px solid var(--ink); padding-bottom: 5px; margin-bottom: 8px; }
+    .sheet-title-wrap { display: flex; align-items: baseline; gap: 10px; }
+    .sheet-title { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.05em; }
+    .sheet-step-badge { font-size: 0.74rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #f4f4f5;
+      border: 1px solid #71717a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet-page-num { font-size: 0.8rem; color: #71717a; font-weight: 600; }
+    .name-line { font-size: 0.94rem; border-bottom: 1px solid var(--ink); width: 195px; padding-bottom: 3px; letter-spacing: 0.05em; }
+    .guide { font-size: 0.82rem; color: var(--text-sub); margin-bottom: 10px; }
+
+    /* 今日の漢字ストリップ */
+    .kanji-strip { display: flex; gap: 8px; margin-bottom: 14px; }
+    .kbox { flex: 1; border: 1.2px solid var(--ink); border-radius: 6px; text-align: center; padding: 4px 2px 5px; background: #fff; }
+    .kbox .kk { font-size: 1.8rem; line-height: 1.05; font-weight: 700; color: var(--ink); }
+    .kbox .kr { font-size: 0.68rem; color: var(--text-sub); line-height: 1.25; min-height: 1.25em; margin-top: 3px; }
+    .kbox.hidden-kanji .kk { color: #d4d4d8; font-size: 1.5rem; line-height: 1.3; }
+
+    /* 行（短文問題＋こたえ欄）*/
+    .rows { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .row { display: grid; grid-template-columns: 1fr 34mm; align-items: stretch; border: 1.2px solid #a1a1aa; border-radius: 8px; background: #fff; min-height: 35mm; }
+    .no-fold .row { grid-template-columns: 1fr; }
+    .no-fold .ans-cell { display: none; }
+
+    .item-sent-box { padding: 8px 16px; display: flex; align-items: center; gap: 14px; min-height: 35mm; }
+    .item-sent-box .q-no {
+      font-size: 1.15rem; font-weight: 800; color: var(--ink);
+      width: 28px; height: 28px; border-radius: 50%; background: var(--bg-subtle);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .sent-content {
+      font-size: 1.35rem; line-height: 2.5; color: var(--ink); letter-spacing: 0.04em;
+      flex: 1;
+    }
+
+    /* 文中に埋め込まれる漢字マス */
+    .inline-kaki-wrap {
+      display: inline-block; vertical-align: middle; text-align: center;
+      margin: 0 4px; line-height: 1;
+    }
+    .inline-ruby {
+      display: block; font-size: 0.74rem; font-weight: 700; color: var(--accent);
+      margin-bottom: 2px; height: 0.85rem; letter-spacing: 0;
+    }
+    .kaki-cell-lg {
+      width: 17mm; height: 17mm; border: 1.6px solid #3f3f46; position: relative;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 2.1rem;
+      background: #fff; border-radius: 3px; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .kaki-cell-lg::before {
+      content: ""; position: absolute; top: 0; bottom: 0; left: 50%;
+      border-left: 1px dashed #d4d4d8; pointer-events: none;
+    }
+    .kaki-cell-lg::after {
+      content: ""; position: absolute; left: 0; right: 0; top: 50%;
+      border-top: 1px dashed #d4d4d8; pointer-events: none;
+    }
+    /* ステップ1: なぞり用の薄い文字 */
+    .kaki-cell-lg.trace { color: #c4c4cc; font-weight: 500; }
+    .kaki-cell-lg.blank { color: transparent; }
+
+    /* 解答欄 */
+    .ans-cell {
+      border-left: 1.5px dashed #71717a; padding: 10px 8px; font-size: 0.85rem; color: var(--ink);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      background: #fafaf9; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .ans-header { font-size: 0.65rem; color: #71717a; margin-bottom: 4px; font-weight: 600; }
+    .ans-k-lg { font-size: 1.6rem; font-weight: 800; color: var(--ink); line-height: 1.1; }
+    .ans-r-sub { font-size: 0.75rem; color: var(--text-sub); margin-top: 2px; }
+
+    ruby rt { font-size: 0.52em; letter-spacing: 0; color: var(--text-sub); }
+
+    .foot { margin-top: auto; padding-top: 6px; border-top: 1px solid var(--border-soft); display: flex;
+      justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); }
+
+    /* モバイル対応 */
+    @media (max-width: 860px) {
+      .sidebar { position: fixed; transform: translateX(-100%); transition: transform 0.2s ease; z-index: 50; }
+      body.drawer-open .sidebar { transform: translateX(0); }
+      .drawer-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 45; }
+      body.drawer-open .drawer-backdrop { display: block; }
+      .drawer-close { display: block; position: absolute; top: 12px; right: 12px; font-size: 1.4rem; background: transparent; border: none; cursor: pointer; color: var(--text-sub); }
+      .main-area { margin-left: 0; }
+      .mobile-unit-bar { display: flex; align-items: center; gap: 8px; width: 100%; padding-bottom: 8px; border-bottom: 1px solid var(--border-soft); }
+      .btn-menu { padding: 5px 10px; font-size: 0.78rem; }
+      .current-unit-name { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .top-toolbar { padding: 10px 14px; }
+      .preview-workspace { padding: 12px 6px; overflow-x: auto; }
+      .sheet { width: 210mm; min-width: 210mm; }
+    }
+
+    /* 印刷スタイル */
+    @media print {
+      body { background: #fff; }
+      .no-print { display: none !important; }
+      .main-area { margin-left: 0; }
+      .preview-workspace { padding: 0; }
+      .sheet { box-shadow: none; margin: 0; padding: 10mm 14mm; page-break-after: always; break-after: page; min-height: 297mm; }
+      .sheet:last-child { page-break-after: auto; break-after: auto; }
+      .row { border-color: #a1a1aa; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="drawer-backdrop no-print" id="drawerBackdrop" onclick="closeDrawer()"></div>
+  <aside class="sidebar no-print" id="sidebar">
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="閉じる">×</button>
+    <div class="brand-box">
+      <div class="subject-switch">
+        <a href="../index.html">算数</a>
+        <a href="kanji-yomi.html">国語（読み）</a>
+        <a href="kanji-kaki.html">国語（単語）</a>
+        <a href="kanji-bun.html" class="active">国語（短文）</a>
+        <a href="kanji-puzzle.html">合体パズル</a>
+      </div>
+      <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
+      <div class="brand-main">ゆっくり・すっきり<br/>たんぶん かんじプリント</div>
+      <div class="brand-count" id="unitCountLabel"></div>
+      <div class="brand-note">
+        <p>文の中で漢字を書く力を育てるプリントです。学校・家庭・放課後等デイサービスで、自由に印刷してお使いください（無料・登録不要）。</p>
+        <p>ステップ1（なぞり）→ ステップ2（お手本あり）→ ステップ3（じぶんで書く）のスモールステップ構成です。</p>
+      </div>
+    </div>
+    <div class="grade-filter">
+      <button class="grade-chip" id="chip-all" onclick="filterGrade('all', this)">すべて</button>
+      <button class="grade-chip" id="chip-1" onclick="filterGrade('1', this)">1年</button>
+      <button class="grade-chip" id="chip-2" onclick="filterGrade('2', this)">2年</button>
+      <button class="grade-chip active" id="chip-3" onclick="filterGrade('3', this)">3年</button>
+      <button class="grade-chip" id="chip-4" onclick="filterGrade('4', this)">4年</button>
+      <button class="grade-chip" id="chip-5" onclick="filterGrade('5', this)">5年</button>
+      <button class="grade-chip" id="chip-6" onclick="filterGrade('6', this)">6年</button>
+    </div>
+    <div class="unit-list" id="unitListContainer"></div>
+  </aside>
+
+  <div class="main-area">
+    <header class="top-toolbar no-print">
+      <div class="toolbar-inner">
+        <div class="mobile-unit-bar">
+          <button class="btn btn-menu" onclick="openDrawer()" aria-label="教材を選ぶ">☰ 教材</button>
+          <div class="current-unit-name" id="currentUnitName"></div>
+        </div>
+        <div class="step-pills">
+          <button class="step-pill active" id="pill-step1" onclick="setStep('step1')">ステップ1<span class="pill-sub">（なぞって書く）</span></button>
+          <button class="step-pill" id="pill-step2" onclick="setStep('step2')">ステップ2<span class="pill-sub">（おてほんを見て書く）</span></button>
+          <button class="step-pill" id="pill-step3" onclick="setStep('step3')">ステップ3<span class="pill-sub">（じぶんで書く）</span></button>
+          <button class="step-pill" id="pill-all" onclick="setStep('all')">全ステップ<span class="pill-sub">（1〜3一括）</span></button>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn" onclick="shuffleItems()">もんだいを入れかえる</button>
+          <button class="btn on" id="btnFold" onclick="toggleFold()">こたえ欄（折って隠す）</button>
+          <button class="btn" onclick="copyUnitLink()" title="この単元のURLをコピー">URLコピー</button>
+          <button class="btn btn-all-print" onclick="printAll()" title="ステップ1・2・3をまとめて印刷">単元一括印刷（1〜3）</button>
+          <button class="btn btn-print" onclick="window.print()">A4で印刷</button>
+        </div>
+      </div>
+    </header>
+    <main class="preview-workspace"><div id="sheetsContainer"></div></main>
+  </div>
+  <div class="toast" id="toastBox"></div>
+
+  <script src="kanji1-data.js"></script>
+  <script src="kanji2-data.js"></script>
+  <script src="kanji3-data.js"></script>
+  <script src="kanji4-data.js"></script>
+  <script src="kanji5-data.js"></script>
+  <script src="kanji6-data.js"></script>
+  <script>
+    const ALL_UNITS = [...KANJI_UNITS_G1, ...KANJI_UNITS_G2, ...KANJI_UNITS, ...KANJI_UNITS_G4, ...KANJI_UNITS_G5, ...KANJI_UNITS_G6];
+    const STEP_INFO = {
+      step1: {
+        badge: "ステップ1",
+        sub: "なぞって書く",
+        guide: "こえに だして ぶんを よみながら、マスの うすい かんじを なぞろう。おわったら みぎを おって こたえあわせ。"
+      },
+      step2: {
+        badge: "ステップ2",
+        sub: "おてほんを見て書く",
+        guide: "うえの「きょうの かんじ」を みながら、ぶんの マスに かんじを かこう。おわったら みぎを おって こたえあわせ。"
+      },
+      step3: {
+        badge: "ステップ3",
+        sub: "じぶんで書く",
+        guide: "おてほんを みないで、ぶんの いみを かんがえて かんじを かこう。おわったら みぎを おって こたえあわせ。"
+      }
+    };
+
+    // 初期状態: 3年生の第1単元（g3-01）
+    let state = { unit: "g3-01", gradeFilter: "3", level: "step1", seed: 1, fold: true };
+
+    /* ---------- 表記のパース ---------- */
+    function parse(str) {
+      const nodes = [], re = /\{([^|}]+)\|([^|}]+)(?:\|(!))?\}/g;
+      let last = 0, m;
+      while ((m = re.exec(str)) !== null) {
+        if (m.index > last) nodes.push({ t: "x", text: str.slice(last, m.index) });
+        nodes.push({ t: "r", k: m[1], r: m[2], always: !!m[3] });
+        last = re.lastIndex;
+      }
+      if (last < str.length) nodes.push({ t: "x", text: str.slice(last) });
+      return nodes;
+    }
+    function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+    /* 短文のインラインマスHTML生成 */
+    function makeSentInlineHtml(sentStr, targetK, level) {
+      const nodes = parse(sentStr);
+      let html = "";
+      let targetReading = "";
+      let replaced = false;
+      const isTrace = (level === "step1");
+
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        if (n.t === "x") {
+          html += esc(n.text);
+        } else {
+          if (!replaced && n.k.includes(targetK)) {
+            replaced = true;
+            targetReading = n.r;
+            // 漢字を書くマス（上に読み）
+            const cellChar = isTrace ? esc(targetK) : "";
+            const traceClass = isTrace ? "trace" : "blank";
+            html += `<span class="inline-kaki-wrap">` +
+                    `<span class="inline-ruby">${esc(n.r)}</span>` +
+                    `<span class="kaki-cell-lg ${traceClass}">${cellChar}</span>` +
+                    `</span>`;
+          } else {
+            // 対象外の漢字（または2回目以降）はふりがな付きで表示
+            html += `<ruby>${esc(n.k)}<rt>${esc(n.r)}</rt></ruby>`;
+          }
+        }
+      }
+      return { html, targetReading };
+    }
+
+    /* 乱数 */
+    function mulberry(a) {
+      return function () {
+        a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    function shuffled(arr, seed) {
+      if (seed <= 1) return arr.slice();
+      const rnd = mulberry(seed), a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+      return a;
+    }
+
+    function getUnit(id) { return ALL_UNITS.find(u => u.id === id) || ALL_UNITS[0]; }
+    function circled(n) { return "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳"[n - 1] || String(n); }
+
+    /* ---------- シート組み立て ---------- */
+    function buildSheet(unitId, level, pageLabel) {
+      const u = getUnit(unitId), info = STEP_INFO[level];
+      const uk = u.kanji.map(x => x.k).join("");
+
+      // 5文字の文リスト
+      const items = u.kanji.map(kobj => {
+        const res = makeSentInlineHtml(kobj.sent, kobj.k, level);
+        return {
+          targetK: kobj.k,
+          reading: res.targetReading,
+          sentHtml: res.html,
+          rawSent: kobj.sent
+        };
+      });
+
+      const list = shuffled(items, state.seed);
+
+      // 今日の漢字ストリップ（ステップ3では「？」）
+      const isStep3 = (level === "step3");
+      const strip = u.kanji.map(x => {
+        const charDisplay = isStep3 ? "？" : esc(x.k);
+        const kr = `${esc(x.on)}${x.kun ? "<br>" + esc(x.kun) : ""}`;
+        return `<div class="kbox ${isStep3 ? "hidden-kanji" : ""}"><div class="kk">${charDisplay}</div><div class="kr">${kr}</div></div>`;
+      }).join("");
+
+      let rows = "";
+      list.forEach((item, idx) => {
+        const qNum = idx + 1;
+        rows += `<div class="row">` +
+                `<div class="item-sent-box">` +
+                `<span class="q-no">${qNum}</span>` +
+                `<div class="sent-content">${item.sentHtml}</div>` +
+                `</div>` +
+                `<div class="ans-cell">` +
+                (idx === 0 ? `<div class="ans-header">こたえ（おる）</div>` : ``) +
+                `<span class="ans-k-lg">${esc(item.targetK)}</span>` +
+                `<span class="ans-r-sub">（${esc(item.reading)}）</span>` +
+                `</div>` +
+                `</div>`;
+      });
+
+      return `<section class="sheet ${state.fold ? "" : "no-fold"}">
+        <div class="sheet-header">
+          <div class="sheet-title-wrap">
+            <span class="sheet-title">かんじ たんぶん ${circled(u.no)}</span>
+            <span class="sheet-step-badge">${info.badge} ${info.sub}</span>
+            <span style="font-size:0.75rem; color:#71717a; font-weight:700;">（${uk}）</span>
+          </div>
+          <div style="display:flex; align-items:flex-end; gap:16px;">
+            <div class="name-line">なまえ</div>
+            ${pageLabel ? `<span class="sheet-page-num">${pageLabel}</span>` : ""}
+          </div>
+        </div>
+        <div class="guide">${info.guide}</div>
+        <div class="kanji-strip">${strip}</div>
+        <div class="rows">${rows}</div>
+        <div class="foot">
+          <span>ゆっくり・すっきり たんぶん かんじプリント</span>
+          <span>https://seed-craft.github.io/edu-math-drill/</span>
+        </div>
+      </section>`;
+    }
+
+    /* ---------- レンダリング ---------- */
+    function render() {
+      const container = document.getElementById("sheetsContainer");
+      if (state.level === "all") {
+        container.innerHTML = ["step1", "step2", "step3"]
+          .map((lvl, i) => buildSheet(state.unit, lvl, `${i + 1} / 3`))
+          .join("");
+      } else {
+        container.innerHTML = buildSheet(state.unit, state.level, "");
+      }
+
+      // 単元名の更新
+      const u = getUnit(state.unit);
+      const gradeStr = u.grade ? `${u.grade}年` : "";
+      const currentNameEl = document.getElementById("currentUnitName");
+      if (currentNameEl) {
+        currentNameEl.textContent = `${gradeStr} 単元${u.no}: ${u.kanji.map(x => x.k).join(" ")}`;
+      }
+    }
+
+    /* ---------- イベント処理・UI更新 ---------- */
+    function setStep(lvl) {
+      state.level = lvl;
+      document.querySelectorAll(".step-pill").forEach(p => p.classList.remove("active"));
+      const target = document.getElementById(`pill-${lvl}`);
+      if (target) target.classList.add("active");
+      render();
+    }
+
+    function toggleFold() {
+      state.fold = !state.fold;
+      const btn = document.getElementById("btnFold");
+      if (btn) btn.classList.toggle("on", state.fold);
+      render();
+    }
+
+    function shuffleItems() {
+      state.seed = (state.seed + 1) % 1000 || 1;
+      render();
+    }
+
+    function selectUnit(id) {
+      state.unit = id;
+      state.seed = 1;
+      updateUnitListActive();
+      render();
+      closeDrawer();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function filterGrade(grade, btnEl) {
+      state.gradeFilter = grade;
+      document.querySelectorAll(".grade-chip").forEach(c => c.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+      buildUnitList();
+    }
+
+    function buildUnitList() {
+      const listEl = document.getElementById("unitListContainer");
+      const filtered = state.gradeFilter === "all"
+        ? ALL_UNITS
+        : ALL_UNITS.filter(u => u.grade === state.gradeFilter);
+
+      // 単元数ラベル
+      const countEl = document.getElementById("unitCountLabel");
+      if (countEl) countEl.textContent = `全 ${ALL_UNITS.length} 単元（現在 ${filtered.length} 単元表示）`;
+
+      // 学年ごとにグループ化
+      const groups = {};
+      filtered.forEach(u => {
+        const g = u.grade || "その他";
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(u);
+      });
+
+      let html = "";
+      Object.keys(groups).sort().forEach(g => {
+        html += `<div class="cat-group"><div class="cat-group-title">${g}年生の漢字</div>`;
+        groups[g].forEach(u => {
+          const isActive = (u.id === state.unit);
+          const chars = u.kanji.map(x => x.k).join(" ");
+          html += `<button class="unit-btn ${isActive ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
+                  `<span class="unit-grade-tag">${u.grade}年-${u.no}</span>` +
+                  `<div class="unit-name">${chars}</div>` +
+                  `</button>`;
+        });
+        html += `</div>`;
+      });
+      listEl.innerHTML = html;
+    }
+
+    function updateUnitListActive() {
+      document.querySelectorAll(".unit-btn").forEach(b => {
+        const isThis = b.getAttribute("onclick").includes(`'${state.unit}'`);
+        b.classList.toggle("active", isThis);
+      });
+    }
+
+    function openDrawer() { document.body.classList.add("drawer-open"); }
+    function closeDrawer() { document.body.classList.remove("drawer-open"); }
+
+    function copyUnitLink() {
+      const url = `${location.origin}${location.pathname}?u=${state.unit}&l=${state.level}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast("単元のURLをコピーしました");
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toastBox");
+      t.textContent = msg; t.style.display = "block";
+      setTimeout(() => { t.style.display = "none"; }, 2400);
+    }
+
+    function printAll() {
+      const prev = state.level;
+      state.level = "all";
+      render();
+      window.print();
+      state.level = prev;
+      render();
+    }
+
+    // 初期化
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(location.search);
+      if (params.get("u")) state.unit = params.get("u");
+      if (params.get("l")) state.level = params.get("l");
+
+      const u = getUnit(state.unit);
+      if (u && u.grade) {
+        state.gradeFilter = u.grade;
+        document.querySelectorAll(".grade-chip").forEach(c => {
+          c.classList.toggle("active", c.id === `chip-${u.grade}`);
+        });
+      }
+
+      buildUnitList();
+      setStep(state.level);
+    });
+  </script>
+</body>
+</html>

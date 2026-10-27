@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ゆっくり・すっきり かんじ がったいパズル（部首・パーツ）</title>
+  <style>
+    :root {
+      --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
+      --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
+      --border-soft: #e7e5e4; --border-mid: #d6d3d1;
+      --accent: #2c5e4f; --accent-soft: #eaf2ef; --ink: #18181b; --ans-red: #c2410c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--bg-app); color: var(--text-main);
+      display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ====== サイドバー ====== */
+    .sidebar { width: 300px; background: var(--bg-panel); border-right: 1px solid var(--border-soft);
+      display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; overflow-y: auto; }
+    .brand-box { padding: 20px 18px 16px; border-bottom: 1px solid var(--border-soft); }
+    .subject-switch { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+    .subject-switch a { flex: 1 1 45%; text-align: center; text-decoration: none; font-size: 0.72rem; font-weight: 700;
+      padding: 6px 0; border-radius: 6px; color: var(--text-sub); background: var(--bg-subtle); }
+    .subject-switch a.active { background: var(--text-main); color: #fff; }
+    .brand-kicker { font-size: 0.68rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .brand-main { font-size: 1.02rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1.35; }
+    .brand-count { font-size: 0.72rem; color: var(--text-sub); margin-top: 4px; font-weight: 600; }
+    .brand-note { font-size: 0.68rem; color: var(--text-sub); line-height: 1.55; margin-top: 10px; padding: 8px 10px;
+      background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; }
+    .unit-list { padding: 14px 12px 32px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .cat-group-title { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: 0.05em;
+      margin-bottom: 6px; padding-left: 6px; border-left: 3px solid var(--accent); }
+    .unit-btn { width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 7px;
+      padding: 8px 10px; margin-bottom: 4px; cursor: pointer; display: flex; align-items: flex-start; gap: 8px; font-family: inherit; }
+    .unit-btn:hover { background: #fafaf9; border-color: var(--border-soft); }
+    .unit-btn.active { background: var(--accent-soft); border-color: #b7d4cb; }
+    .unit-no-tag { font-size: 0.64rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+      background: var(--bg-subtle); color: var(--text-sub); white-space: nowrap; margin-top: 1px; }
+    .unit-btn.active .unit-no-tag { background: var(--accent); color: #fff; }
+    .unit-name { font-size: 0.82rem; font-weight: 700; line-height: 1.35; }
+
+    /* ====== メイン領域 ====== */
+    .main-wrap { margin-left: 300px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .top-toolbar { background: var(--bg-panel); border-bottom: 1px solid var(--border-soft); padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 30; }
+    .toolbar-left { display: flex; align-items: center; gap: 12px; }
+    .drawer-toggle { display: none; background: none; border: 1px solid var(--border-mid); border-radius: 6px;
+      padding: 6px 10px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .level-tabs { display: flex; background: var(--bg-subtle); padding: 3px; border-radius: 8px; gap: 2px; }
+    .level-tab { border: none; background: transparent; padding: 6px 14px; font-size: 0.78rem; font-weight: 700;
+      color: var(--text-sub); border-radius: 6px; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .level-tab.active { background: #fff; color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .btn { border: 1px solid var(--border-mid); background: #fff; padding: 7px 14px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { opacity: 0.92; }
+
+    .content-area { padding: 32px 24px 60px; display: flex; justify-content: center; }
+
+    /* ====== プリント用紙（A4縦） ====== */
+    .print-sheet {
+      width: 210mm; min-height: 297mm; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      padding: 14mm 16mm 14mm; margin-bottom: 32px; display: flex; flex-direction: column; position: relative;
+    }
+
+    /* ヘッダー */
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 10px; border-bottom: 2px solid var(--text-main); margin-bottom: 14px; }
+    .sheet-title-box { display: flex; flex-direction: column; }
+    .sheet-unit-kicker { font-size: 0.85rem; font-weight: 800; color: var(--accent); letter-spacing: 0.05em; }
+    .sheet-title { font-size: 1.45rem; font-weight: 900; letter-spacing: 0.03em; margin-top: 2px; }
+    .sheet-level-badge { font-size: 0.82rem; font-weight: 700; color: #fff; background: var(--accent); padding: 3px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; align-self: flex-start; }
+    .sheet-meta { display: flex; gap: 14px; align-items: flex-end; font-size: 0.85rem; }
+    .meta-box { border-bottom: 1px solid var(--border-mid); padding: 0 8px 3px; min-width: 140px; text-align: right; }
+    .meta-box.name-box { min-width: 180px; text-align: left; }
+
+    /* 説明・リード */
+    .sheet-lead { font-size: 0.85rem; line-height: 1.5; color: var(--text-sub); margin-bottom: 14px; padding: 6px 10px; background: #fafaf9; border-left: 4px solid var(--accent); border-radius: 3px; }
+
+    /* パズルリスト */
+    .puzzle-grid { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .puzzle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      border: 1px solid var(--border-soft); border-radius: 8px; padding: 8px 12px; background: #fff;
+    }
+    .q-num { font-size: 1.05rem; font-weight: 900; width: 26px; color: var(--accent); }
+    
+    /* 計算式エリア */
+    .puzzle-formula { display: flex; align-items: center; gap: 10px; flex: 1; }
+    .part-box {
+      width: 50px; height: 50px; border: 2px solid var(--ink); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; font-weight: 800; background: #fafaf9;
+    }
+    .plus-sign, .equal-sign { font-size: 1.4rem; font-weight: 900; color: var(--text-sub); }
+
+    /* 回答漢字マス */
+    .kanji-cell {
+      width: 62px; height: 62px; border: 2.5px solid var(--ink); position: relative;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+    }
+    /* 十字リーダー点線 */
+    .kanji-cell::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 0; border-top: 1px dashed #cbd5e1; }
+    .kanji-cell::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 1px dashed #cbd5e1; }
+    
+    .cell-char { position: relative; z-index: 2; font-size: 2.3rem; font-weight: 900; line-height: 1; }
+    .cell-char.trace { color: #cbd5e1; -webkit-print-color-adjust: exact; }
+    .cell-char.blank { display: none; }
+
+    /* ヒント */
+    .puzzle-hint { flex: 1; margin-left: 14px; display: flex; flex-direction: column; gap: 3px; }
+    .hint-word { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+    .hint-yomi { font-size: 0.76rem; color: var(--text-sub); }
+
+    /* 右端：折って隠す自己採点欄 */
+    .fold-cut-zone {
+      width: 78px; margin-left: 12px; border-left: 2px dashed #94a3b8; padding-left: 10px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    }
+    .ans-char { font-size: 1.6rem; font-weight: 900; color: var(--ans-red); line-height: 1.1; }
+    .ans-yomi { font-size: 0.68rem; font-weight: 700; color: var(--text-sub); margin-top: 2px; }
+
+    .fold-header-note { font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-bottom: 2px; writing-mode: vertical-rl; }
+
+    /* ====== 印刷スタイル ====== */
+    @media print {
+      body { background: #fff; display: block; }
+      .sidebar, .top-toolbar { display: none !important; }
+      .main-wrap { margin-left: 0; }
+      .content-area { padding: 0; }
+      .print-sheet {
+        width: 100%; min-height: auto; box-shadow: none; margin: 0;
+        page-break-after: always; padding: 12mm 14mm 12mm;
+      }
+      .puzzle-row { page-break-inside: avoid; }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.2s; }
+      body.drawer-open .sidebar { transform: translateX(0); }
+      .main-wrap { margin-left: 0; }
+      .drawer-toggle { display: inline-flex; }
+      .print-sheet { width: 100%; min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <!-- サイドバー -->
+  <aside class="sidebar">
+    <div class="brand-box">
+      <div class="subject-switch">
+        <a href="../index.html">算数</a>
+        <a href="kanji-yomi.html">国語（読み）</a>
+        <a href="kanji-kaki.html">国語（単語）</a>
+        <a href="kanji-bun.html">国語（短文）</a>
+        <a href="kanji-puzzle.html" class="active">合体パズル</a>
+      </div>
+      <div class="brand-kicker">部首・パーツで形をつかむ</div>
+      <h1 class="brand-main">漢字がったいパズル</h1>
+      <div class="brand-count" id="unitCountLabel">全 8 単元</div>
+      <div class="brand-note">
+        <p><strong>ねらい：</strong>「へん・つくり」などのパーツを足し算して1つの漢字をつくるプリントです。</p>
+        <p>形のバランスやつまずきやすい部首の認知を助けます。</p>
+      </div>
+    </div>
+    <div class="unit-list" id="unitList"></div>
+  </aside>
+
+  <!-- メインエリア -->
+  <div class="main-wrap">
+    <header class="top-toolbar">
+      <div class="toolbar-left">
+        <button class="drawer-toggle" onclick="openDrawer()">単元一覧</button>
+        <div class="level-tabs">
+          <button class="level-tab active" id="tab-step1" onclick="setStep('step1')">ステップ1（なぞり）</button>
+          <button class="level-tab" id="tab-step2" onclick="setStep('step2')">ステップ2（じぶんで）</button>
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn" onclick="copyUnitLink()">リンク共有</button>
+        <button class="btn btn-primary" onclick="window.print()">印刷する</button>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <div id="sheetContainer"></div>
+    </main>
+  </div>
+
+  <script src="kanji-puzzle-data.js"></script>
+  <script>
+    const state = {
+      unit: "pz3-01",
+      step: "step1" // "step1" or "step2"
+    };
+
+    function getUnit(id) {
+      return PUZZLE_UNITS.find(u => u.id === id) || PUZZLE_UNITS[0];
+    }
+
+    function setStep(s) {
+      state.step = s;
+      document.querySelectorAll(".level-tab").forEach(t => {
+        t.classList.toggle("active", t.id === `tab-${s}`);
+      });
+      render();
+    }
+
+    function selectUnit(id) {
+      state.unit = id;
+      updateUnitListActive();
+      render();
+      closeDrawer();
+    }
+
+    function render() {
+      const u = getUnit(state.unit);
+      const isTrace = (state.step === "step1");
+      const stepBadgeText = isTrace ? "ステップ1：なぞって がったい" : "ステップ2：じぶんで がったい";
+      const leadText = isTrace 
+        ? "パーツを たしざんして かん字を つくろう。うすい字を なぞって、かたちの バランスを つかもう！"
+        : "パーツを たしざんして、マスの中に かん字を バランスよく 書こう。（おわったら 右をおって 答えあわせ）";
+
+      let rowsHtml = "";
+      u.items.forEach((item, idx) => {
+        const num = idx + 1;
+        const charHtml = isTrace
+          ? `<span class="cell-char trace">${item.ans}</span>`
+          : `<span class="cell-char blank"></span>`;
+
+        rowsHtml += `
+          <div class="puzzle-row">
+            <div class="q-num">${num}</div>
+            <div class="puzzle-formula">
+              <div class="part-box">${item.p1}</div>
+              <div class="plus-sign">＋</div>
+              <div class="part-box">${item.p2}</div>
+              <div class="equal-sign">＝</div>
+              <div class="kanji-cell">${charHtml}</div>
+            </div>
+            <div class="puzzle-hint">
+              <div class="hint-word">ヒント：${item.hint}</div>
+              <div class="hint-yomi">よみ：${item.yomi}</div>
+            </div>
+            <div class="fold-cut-zone">
+              <div class="ans-char">${item.ans}</div>
+              <div class="ans-yomi">${item.yomi.split("・")[0]}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      const sheetHtml = `
+        <div class="print-sheet">
+          <div class="sheet-header">
+            <div class="sheet-title-box">
+              <span class="sheet-unit-kicker">かんじ がったい パズル ［${u.no}］</span>
+              <h2 class="sheet-title">${u.title}</h2>
+              <span class="sheet-level-badge">${stepBadgeText}</span>
+            </div>
+            <div class="sheet-meta">
+              <div class="meta-box">月　　日</div>
+              <div class="meta-box name-box">なまえ：</div>
+            </div>
+          </div>
+          <div class="sheet-lead">${leadText}</div>
+          <div class="puzzle-grid">${rowsHtml}</div>
+        </div>
+      `;
+
+      document.getElementById("sheetContainer").innerHTML = sheetHtml;
+    }
+
+    function buildUnitList() {
+      const listEl = document.getElementById("unitList");
+      let html = `<div class="cat-group"><div class="cat-group-title">3年生の漢字パズル</div>`;
+      PUZZLE_UNITS.forEach(u => {
+        const isActive = (u.id === state.unit);
+        html += `
+          <button class="unit-btn ${isActive ? "active" : ""}" onclick="selectUnit('${u.id}')">
+            <span class="unit-no-tag">第${u.no}回</span>
+            <div class="unit-name">${u.title}</div>
+          </button>
+        `;
+      });
+      html += `</div>`;
+      listEl.innerHTML = html;
+    }
+
+    function updateUnitListActive() {
+      document.querySelectorAll(".unit-btn").forEach(b => {
+        const isThis = b.getAttribute("onclick").includes(`'${state.unit}'`);
+        b.classList.toggle("active", isThis);
+      });
+    }
+
+    function openDrawer() { document.body.classList.add("drawer-open"); }
+    function closeDrawer() { document.body.classList.remove("drawer-open"); }
+
+    function copyUnitLink() {
+      const url = `${location.origin}${location.pathname}?u=${state.unit}&s=${state.step}`;
+      navigator.clipboard.writeText(url).then(() => { alert("URLをコピーしました"); });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(location.search);
+      if (params.get("u")) state.unit = params.get("u");
+      if (params.get("s")) state.step = params.get("s");
+      buildUnitList();
+      render();
+    });
+  </script>
+</body>
+</html>

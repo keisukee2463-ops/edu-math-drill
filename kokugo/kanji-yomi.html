@@ -22,9 +22,9 @@
     .sidebar { width: 300px; background: var(--bg-panel); border-right: 1px solid var(--border-soft);
       display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; overflow-y: auto; }
     .brand-box { padding: 20px 18px 16px; border-bottom: 1px solid var(--border-soft); }
-    .subject-switch { display: flex; gap: 4px; margin-bottom: 12px; }
-    .subject-switch a { flex: 1; text-align: center; text-decoration: none; font-size: 0.78rem; font-weight: 700;
-      padding: 6px 0; border-radius: 6px; color: var(--text-sub); background: var(--bg-subtle); }
+    .subject-switch { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+    .subject-switch a { flex: 1 0 auto; text-align: center; text-decoration: none; font-size: 0.7rem; font-weight: 700;
+      padding: 5px 6px; border-radius: 6px; color: var(--text-sub); background: var(--bg-subtle); }
     .subject-switch a.active { background: var(--text-main); color: #fff; }
     .brand-kicker { font-size: 0.68rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 4px; }
     .brand-main { font-size: 1.02rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1.35; }
@@ -169,7 +169,9 @@
       <div class="subject-switch">
         <a href="../index.html">算数</a>
         <a href="kanji-yomi.html" class="active">国語（読み）</a>
-        <a href="kanji-kaki.html">国語（書き）</a>
+        <a href="kanji-kaki.html">国語（単語）</a>
+        <a href="kanji-bun.html">国語（短文）</a>
+        <a href="kanji-puzzle.html">合体パズル</a>
       </div>
       <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
       <div class="brand-main">ゆっくり・すっきり<br/>かんじ よみプリント</div>
