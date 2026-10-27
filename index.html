@@ -914,6 +914,19 @@
       border: none;
       background: transparent;
     }
+    .mul2d-table td.div-sign {
+      position: relative;
+      border-left: none !important;
+    }
+    .mul2d-table .div-curve-svg {
+      position: absolute;
+      left: -1px;
+      top: -1px;
+      width: 20px;
+      height: 40px;
+      pointer-events: none;
+      overflow: visible;
+    }
 
     /* クロス集計表 */
     .cross-table {
@@ -5549,6 +5562,7 @@
         for (let i = 1; i <= 3; i++) {
           list.push({ ...cand[(s + i) % cand.length], isRei: false });
         }
+        const divCurveSvg = '<svg class="div-curve-svg" viewBox="0 0 20 40"><path d="M 0 1 C 4.5 10, 3.5 28, -2 38" fill="none" stroke="#18181b" stroke-width="2" stroke-linecap="round"/></svg>';
         const itemsHtml = list.map((it, idx) => {
           const dT = Math.floor(it.dvd / 10), dO = it.dvd % 10;
           const qT = Math.floor(dT / it.dvr), qO = Math.floor(dO / it.dvr);
@@ -5563,8 +5577,8 @@
                 <table class="mul2d-table" style="font-size:1.35rem;">
                   <tr><td class="blank"></td><td>${cellVal(qT, traceTens)}</td><td>${cellVal(qO, traceOnes)}</td></tr>
                   <tr>
-                    <td class="op" style="border-right:2px solid #18181b; padding-right:4px;">${it.dvr}</td>
-                    <td style="border-top:2px solid #18181b;">${dT}</td>
+                    <td class="op" style="padding-right:6px;">${it.dvr}</td>
+                    <td class="div-sign" style="border-top:2px solid #18181b;">${divCurveSvg}${dT}</td>
                     <td style="border-top:2px solid #18181b;">${dO}</td>
                   </tr>
                   <tr class="line-sub"><td class="blank"></td><td>${cellVal(p1, traceTens)}</td><td class="blank" style="font-size:0.9rem; color:#71717a;">${showSteps ? '↓' : ''}</td></tr>
@@ -5596,6 +5610,7 @@
         for (let i = 1; i <= 3; i++) {
           list.push({ ...cand[(s + i) % cand.length], isRei: false });
         }
+        const divCurveSvg = '<svg class="div-curve-svg" viewBox="0 0 20 40"><path d="M 0 1 C 4.5 10, 3.5 28, -2 38" fill="none" stroke="#18181b" stroke-width="2" stroke-linecap="round"/></svg>';
         const itemsHtml = list.map((it, idx) => {
           const dvdT = Math.floor(it.dvd / 10), dvdO = it.dvd % 10;
           const dvrT = Math.floor(it.dvr / 10);
@@ -5609,8 +5624,8 @@
                 <table class="mul2d-table" style="font-size:1.35rem;">
                   <tr><td class="blank"></td><td class="blank"></td><td>${cellVal(it.q, traceAns)}</td></tr>
                   <tr>
-                    <td class="op" style="border-right:2px solid #18181b; width:38px; padding-right:4px;">${it.dvr}</td>
-                    <td style="border-top:2px solid #18181b;">${dvdT}</td>
+                    <td class="op" style="width:38px; padding-right:6px;">${it.dvr}</td>
+                    <td class="div-sign" style="border-top:2px solid #18181b;">${divCurveSvg}${dvdT}</td>
                     <td style="border-top:2px solid #18181b;">${dvdO}</td>
                   </tr>
                   <tr class="line-sub"><td class="blank"></td><td>${cellVal(dvdT, traceSub)}</td><td>${cellVal(dvdO, traceSub)}</td></tr>
