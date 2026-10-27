@@ -1231,7 +1231,8 @@
           { id: "clock_read_5min", grade: "1", badge: "1年", name: "とけいを よもう②（5ふん・1ぷんきざみ）" },
           { id: "clock_diff_same", grade: "2", badge: "2年", name: "なんじなんぷん・あと なんぷんかん①（同じ時）" },
           { id: "clock_diff_to_hour", grade: "2", badge: "2年", name: "なんじなんぷん・あと なんぷんかん②（ちょうどまで）" },
-          { id: "clock_diff_cross", grade: "2", badge: "2年", name: "なんじなんぷん・あと なんぷんかん③（00分をまたぐ）" },
+          { id: "clock_diff_from_hour", grade: "2", badge: "2年", name: "なんじなんぷん・あと なんぷんかん③（ちょうどから）" },
+          { id: "clock_diff_cross", grade: "2", badge: "2年", name: "なんじなんぷん・あと なんぷんかん④（00分をまたぐ）" },
           { id: "clock_after", grade: "2", badge: "2年", name: "○ふんごの じこく（針をすすめる）" },
           { id: "clock_before", grade: "2", badge: "2年", name: "○ふんまえの じこく（針をもどす）" },
           { id: "clock_unit_conv", grade: "2", badge: "2年", name: "じかんの たんい（1時間＝60分・1日＝24時間）" }
@@ -1744,7 +1745,7 @@
                 <div class="clock-time-boxes">
                   <span class="box sm">${cellVal(p.h1, showTraceStart)}</span>
                   <span>じ</span>
-                  <span class="box sm">${cellVal(p.m1, showTraceStart)}</span>
+                  <span class="box sm">${cellVal(p.m1 === 0 ? '0' : p.m1, showTraceStart)}</span>
                   <span>ふん</span>
                 </div>
               </div>
@@ -1888,6 +1889,18 @@
         return buildClockDiffSheetHTML('とけい（ちょうど まで あと なんぷんかん②）', pageLabel, pairs, level, false);
       }
 
+      if (unit === 'clock_diff_from_hour') {
+        const pairs = [{ h1: 10, m1: 0, h2: 10, m2: 20, diff: 20, isRei: true }];
+        const minCandidates = [15, 25, 35, 40, 10, 50, 45, 20, 30, 55];
+        for (let i = 1; i <= 3; i++) {
+          const h = ((s + i * 3) % 12) + 1;
+          const m2 = minCandidates[(s + i * 2) % minCandidates.length];
+          const diff = m2;
+          pairs.push({ h1: h, m1: 0, h2: h, m2, diff, isRei: false });
+        }
+        return buildClockDiffSheetHTML('とけい（ちょうど から あと なんぷんかん③）', pageLabel, pairs, level, false);
+      }
+
       if (unit === 'clock_diff_cross') {
         const pairs = [{ h1: 9, m1: 50, h2: 10, m2: 10, diff: 20, isRei: true }];
         const startMins = [45, 50, 55, 40, 35];
@@ -1900,7 +1913,7 @@
           const diff = (60 - m1) + m2;
           pairs.push({ h1, m1, h2, m2, diff, isRei: false });
         }
-        return buildClockDiffSheetHTML('とけい（00ふんを またぐ あと なんぷんかん③）', pageLabel, pairs, level, true);
+        return buildClockDiffSheetHTML('とけい（00ふんを またぐ あと なんぷんかん④）', pageLabel, pairs, level, true);
       }
 
       if (unit === 'clock_after') {
