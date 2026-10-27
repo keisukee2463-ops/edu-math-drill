@@ -192,7 +192,7 @@
       </div>
       <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
       <div class="brand-main">ゆっくり・すっきり<br/>にたかんじ えらびプリント</div>
-      <div class="brand-count" id="unitCountLabel">全 10 単元（3年配当漢字中心）</div>
+      <div class="brand-count" id="unitCountLabel">全 24 単元（小1〜3年 似ている漢字対応）</div>
       <div class="brand-note">
         <p>・<strong>ステップ1</strong>：2択からえらんで○をつける（書く負担ゼロ・視覚弁別）。</p>
         <p>・<strong>ステップ2</strong>：2択を見比べ、うすいお手本をなぞって書く。</p>
@@ -203,6 +203,8 @@
 
     <div class="grade-filter">
       <button class="grade-chip" id="chip-all" onclick="filterGrade('all', this)">すべて</button>
+      <button class="grade-chip" id="chip-1" onclick="filterGrade('1', this)">1年</button>
+      <button class="grade-chip" id="chip-2" onclick="filterGrade('2', this)">2年</button>
       <button class="grade-chip active" id="chip-3" onclick="filterGrade('3', this)">3年</button>
     </div>
 
@@ -243,9 +245,11 @@
   <div class="toast" id="toastBox"></div>
 
   <!-- データ読み込み -->
+  <script src="kanji1-diff-data.js"></script>
+  <script src="kanji2-diff-data.js"></script>
   <script src="kanji3-diff-data.js"></script>
   <script>
-    const ALL_DIFF_UNITS = [...KANJI_DIFF_UNITS_G3];
+    const ALL_DIFF_UNITS = [...KANJI_DIFF_UNITS_G1, ...KANJI_DIFF_UNITS_G2, ...KANJI_DIFF_UNITS_G3];
 
     const STEP_INFO = {
       step1: {
@@ -432,7 +436,15 @@
       state.gradeFilter = grade;
       document.querySelectorAll(".grade-chip").forEach(c => c.classList.remove("active"));
       if (btnEl) btnEl.classList.add("active");
+
+      // もし現在の単元が選択した学年に含まれていなければ、その学年の先頭単元を選択
+      const curU = getUnit(state.unit);
+      if (grade !== "all" && curU.grade !== grade) {
+        const target = ALL_DIFF_UNITS.find(u => u.grade === grade);
+        if (target) state.unit = target.id;
+      }
       buildUnitList();
+      render();
     }
 
     function buildUnitList() {
@@ -444,15 +456,25 @@
       const countEl = document.getElementById("unitCountLabel");
       if (countEl) countEl.textContent = `全 ${ALL_DIFF_UNITS.length} 単元（現在 ${filtered.length} 単元表示）`;
 
-      let html = `<div class="cat-group"><div class="cat-group-title">3年生の漢字（似ている漢字・見分け）</div>`;
+      const groups = {};
       filtered.forEach(u => {
-        const isActive = (u.id === state.unit);
-        html += `<button class="unit-btn ${isActive ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
-                `<span class="unit-grade-tag">3年-${u.no}</span>` +
-                `<div><div class="unit-name">${esc(u.title)}</div><div class="unit-sub">${esc(u.focus)}</div></div>` +
-                `</button>`;
+        const g = u.grade || "3";
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(u);
       });
-      html += `</div>`;
+
+      let html = "";
+      Object.keys(groups).sort().forEach(g => {
+        html += `<div class="cat-group"><div class="cat-group-title">${g}年生の漢字（似ている漢字・見分け）</div>`;
+        groups[g].forEach(u => {
+          const isActive = (u.id === state.unit);
+          html += `<button class="unit-btn ${isActive ? "active" : ""}" onclick="selectUnit('${u.id}')">` +
+                  `<span class="unit-grade-tag">${u.grade}年-${u.no}</span>` +
+                  `<div><div class="unit-name">${esc(u.title)}</div><div class="unit-sub">${esc(u.focus)}</div></div>` +
+                  `</button>`;
+        });
+        html += `</div>`;
+      });
       listEl.innerHTML = html;
     }
 
