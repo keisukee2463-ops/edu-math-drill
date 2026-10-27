@@ -112,9 +112,10 @@
     .item-sent-wrap { font-size: 1.28rem; line-height: 1.8; letter-spacing: 0.03em; color: var(--ink); display: flex; align-items: center; flex-wrap: wrap; }
 
     /* ステップ1：2択の選択肢（大きな丸つけ枠） */
+    .choice-wrap-step1 { display: inline-flex; flex-direction: column; align-items: center; margin: 0 4px; vertical-align: middle; }
+    .choice-ruby { font-size: 0.72rem; font-weight: 700; color: var(--text-sub); line-height: 1.1; margin-bottom: 3px; }
     .choice-box-step1 { display: inline-flex; align-items: center; gap: 4px; border: 1.5px solid #71717a; border-radius: 8px;
-      padding: 2px 8px; margin: 0 4px; background: #fff; position: relative; }
-    .choice-ruby { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 0.68rem; font-weight: 700; color: var(--text-sub); }
+      padding: 2px 8px; background: #fff; }
     .choice-opt { font-size: 1.6rem; font-weight: 700; width: 34px; height: 38px; display: inline-flex; align-items: center; justify-content: center;
       border-radius: 50%; cursor: pointer; border: 1.5px dashed transparent; }
     .choice-sep { font-size: 1.1rem; color: #a1a1aa; margin: 0 1px; }
@@ -305,11 +306,13 @@
           const opt1 = esc(choices[0]);
           const opt2 = esc(choices[1]);
           sentInnerHtml = `${esc(item.sentPre)} ` +
-            `<span class="choice-box-step1">` +
+            `<span class="choice-wrap-step1">` +
               `<span class="choice-ruby">${esc(item.yomi)}</span>` +
-              `<span class="choice-opt">${opt1}</span>` +
-              `<span class="choice-sep">／</span>` +
-              `<span class="choice-opt">${opt2}</span>` +
+              `<span class="choice-box-step1">` +
+                `<span class="choice-opt">${opt1}</span>` +
+                `<span class="choice-sep">／</span>` +
+                `<span class="choice-opt">${opt2}</span>` +
+              `</span>` +
             `</span> ` +
             `${esc(item.sentPost)}`;
         } else if (level === "step2") {
