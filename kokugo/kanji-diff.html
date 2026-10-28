@@ -6,9 +6,12 @@
   <title>ゆっくり・すっきり にたかんじ えらびプリント（3年）</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
+      /* 画面全体はゴシック、学習する漢字のマスだけ教科書体（Klee One優先で全端末同じ見た目） */
+      --font-ui: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+      --font-kyokasho: "Klee One", "UD Digi Kyokasho N-R", "YuKyokasho", "游教科書体", serif;
       --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
       --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
       --border-soft: #e7e5e4; --border-mid: #d6d3d1;
@@ -16,7 +19,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "YuKyokasho Yoko", "YuKyokasho", "游教科書体 横用", "游教科書体", "Klee One", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      font-family: var(--font-ui);
       background: var(--bg-app); color: var(--text-main);
       display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
@@ -176,6 +179,11 @@
       .preview-workspace { padding: 12px 6px 40px; }
       .sheet { transform-origin: top center; }
     }
+
+    /* ===== 学習用フォント（教科書体）の適用先 ===== */
+    .choice-opt, .choice-hint-tag, .ans-char { font-family: var(--font-kyokasho); font-weight: 600; }
+    .cell-char { font-family: var(--font-kyokasho); font-weight: 400; }
+    .choice-hint-tag .hint-label { font-family: var(--font-ui); }
   </style>
 </head>
 <body>
@@ -397,6 +405,10 @@
       const u = getUnit(state.unit);
       const container = document.getElementById("sheetsContainer");
       document.getElementById("currentUnitName").textContent = `にたかんじ えらび ${u.no}：${u.title}`;
+      const stepMap = { step1: "ステップ1", step2: "ステップ2", step3: "ステップ3", all: "単元一括（ステップ1〜3）" };
+      const stepLabel = stepMap[state.level] || state.level;
+      const gradeStr = u.grade ? `${u.grade}年` : "";
+      document.title = `【${gradeStr}】にたかんじ えらび ${u.no}（${u.title}）_${stepLabel}`;
 
       if (state.level === "all") {
         container.innerHTML =
@@ -512,8 +524,10 @@
       state.level = "all";
       render();
       window.print();
-      state.level = prev;
-      render();
+      setTimeout(() => {
+        state.level = prev;
+        render();
+      }, 500);
     }
 
     function adjustMobileFit() {

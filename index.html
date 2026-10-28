@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ゆっくり・すっきり さんすうプリント</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
+      --font-ui: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
       --bg-app: #f6f5f2;
       --bg-panel: #ffffff;
       --bg-subtle: #efede8;
@@ -28,7 +32,7 @@
     }
 
     body {
-      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      font-family: var(--font-ui);
       background: var(--bg-app);
       color: var(--text-main);
       display: flex;
@@ -1562,12 +1566,25 @@
 
     function updateCurrentUnitName() {
       const el = document.getElementById("currentUnitName");
-      if (!el) return;
+      let currentItem = null;
       for (const cat of CATALOG) {
         const item = cat.items.find(i => i.id === state.unit);
-        if (item) { el.textContent = `${item.badge}｜${item.name}`; return; }
+        if (item) { currentItem = item; break; }
       }
-      el.textContent = "";
+      if (currentItem) {
+        if (el) el.textContent = `${currentItem.badge}｜${currentItem.name}`;
+        const stepLabels = {
+          step1: "ステップ1",
+          step2: "ステップ2",
+          step3: "ステップ3",
+          all: "単元一括（ステップ1〜3）"
+        };
+        const stepName = stepLabels[state.level] || state.level;
+        document.title = `【${currentItem.badge}】${currentItem.name}_${stepName}`;
+      } else {
+        if (el) el.textContent = "";
+        document.title = "ゆっくり・すっきり さんすうプリント";
+      }
     }
 
     function setStep(stepId) {

@@ -6,9 +6,12 @@
   <title>ゆっくり・すっきり かんじ がったいパズル（部首・パーツ）</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
+      /* 画面全体はゴシック、学習する漢字のマスだけ教科書体（Klee One優先で全端末同じ見た目） */
+      --font-ui: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+      --font-kyokasho: "Klee One", "UD Digi Kyokasho N-R", "YuKyokasho", "游教科書体", serif;
       --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
       --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
       --border-soft: #e7e5e4; --border-mid: #d6d3d1;
@@ -16,7 +19,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "YuKyokasho Yoko", "YuKyokasho", "游教科書体 横用", "游教科書体", "Klee One", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      font-family: var(--font-ui);
       background: var(--bg-app); color: var(--text-main);
       display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
@@ -148,6 +151,10 @@
       .drawer-toggle { display: inline-flex; }
       .print-sheet { width: 100%; min-height: auto; }
     }
+
+    /* ===== 学習用フォント（教科書体）の適用先 ===== */
+    .part-box, .ans-char { font-family: var(--font-kyokasho); font-weight: 600; }
+    .cell-char { font-family: var(--font-kyokasho); font-weight: 400; }
   </style>
 </head>
 <body>
@@ -225,6 +232,9 @@
       const u = getUnit(state.unit);
       const isTrace = (state.step === "step1");
       const stepBadgeText = isTrace ? "ステップ1：なぞって がったい" : "ステップ2：じぶんで がったい";
+      const stepLabel = isTrace ? "ステップ1" : "ステップ2";
+      const gradeStr = u.grade ? `${u.grade}年` : "";
+      document.title = `【${gradeStr}】かんじ がったいパズル ［${u.no}］（${u.title}）_${stepLabel}`;
       const leadText = isTrace 
         ? "パーツを たしざんして かん字を つくろう。うすい字を なぞって、かたちの バランスを つかもう！"
         : "パーツを たしざんして、マスの中に かん字を バランスよく 書こう。（おわったら 右をおって 答えあわせ）";

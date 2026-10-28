@@ -6,9 +6,12 @@
   <title>ゆっくり・すっきり かんじ よみプリント（1〜3年）</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
+      /* 画面全体はゴシック、学習する漢字のマスだけ教科書体（Klee One優先で全端末同じ見た目） */
+      --font-ui: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+      --font-kyokasho: "Klee One", "UD Digi Kyokasho N-R", "YuKyokasho", "游教科書体", serif;
       --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
       --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
       --border-soft: #e7e5e4; --border-mid: #d6d3d1;
@@ -16,7 +19,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: "UD Digi Kyokasho N-R", "UD Digi Kyokasho NP-R", "YuKyokasho Yoko", "YuKyokasho", "游教科書体 横用", "游教科書体", "Klee One", "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+      font-family: var(--font-ui);
       background: var(--bg-app); color: var(--text-main);
       display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased;
     }
@@ -161,6 +164,9 @@
         padding: 2mm 2mm 0 2mm !important; margin: 0 !important; page-break-inside: avoid; break-inside: avoid; }
       .sheet:not(:last-child) { page-break-after: always; break-after: page; }
     }
+
+    /* ===== 学習用フォント（教科書体）の適用先 ===== */
+    .kbox .kk, .tg { font-family: var(--font-kyokasho); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -368,7 +374,12 @@
       if (state.level === "all") ["step1", "step2", "step3"].forEach((st, i) => { html += buildSheet(state.unit, st, `（${i + 1} / 3）`); });
       else html = buildSheet(state.unit, state.level, "");
       c.innerHTML = html;
-      document.getElementById("currentUnitName").textContent = unitLabel(getUnit(state.unit));
+      const u = getUnit(state.unit);
+      document.getElementById("currentUnitName").textContent = unitLabel(u);
+      const stepMap = { step1: "ステップ1", step2: "ステップ2", step3: "ステップ3", all: "単元一括（ステップ1〜3）" };
+      const stepLabel = stepMap[state.level] || state.level;
+      const kanjiChars = u.kanji ? u.kanji.map(x => x.k).join("") : "";
+      document.title = `【${u.grade}年】かんじ よみ ${circled(u.no)}（${kanjiChars}）_${stepLabel}`;
       adjustMobileFit();
     }
 
@@ -421,7 +432,16 @@
     }
     function shuffleItems() { state.seed = Math.floor(Math.random() * 100000) + 2; render(); }
     function toggleFold() { state.fold = !state.fold; document.getElementById("btnFold").classList.toggle("on", state.fold); render(); }
-    function printAll() { const prev = state.level; state.level = "all"; render(); window.print(); state.level = prev; render(); }
+    function printAll() {
+      const prev = state.level;
+      state.level = "all";
+      render();
+      window.print();
+      setTimeout(() => {
+        state.level = prev;
+        render();
+      }, 500);
+    }
     function openDrawer() { document.body.classList.add("drawer-open"); }
     function closeDrawer() { document.body.classList.remove("drawer-open"); }
     function showToast(msg) { const t = document.getElementById("toastBox"); t.textContent = msg; t.style.display = "block"; setTimeout(() => t.style.display = "none", 1800); }
