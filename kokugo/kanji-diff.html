@@ -180,7 +180,6 @@
       .top-toolbar { padding: 8px 12px; }
       .toolbar-inner { gap: 8px; }
       .preview-workspace { padding: 12px 6px 40px; }
-      .sheet { transform-origin: top center; }
     }
 
     /* ===== 学習用フォント（教科書体）の適用先 ===== */
@@ -426,7 +425,6 @@
       } else {
         container.innerHTML = renderSingleSheet(u, state.level, "1/1");
       }
-      adjustMobileFit();
     }
 
     function setStep(lvl) {
@@ -538,22 +536,6 @@
       }, 500);
     }
 
-    function adjustMobileFit() {
-      if (window.innerWidth <= 860) {
-        const ws = document.querySelector('.preview-workspace');
-        if (!ws) return;
-        const availableWidth = ws.clientWidth - 12;
-        const scale = Math.min(0.44, (availableWidth - 16) / 810);
-        document.querySelectorAll('.sheet').forEach(s => {
-          s.style.zoom = scale;
-        });
-      } else {
-        document.querySelectorAll('.sheet').forEach(s => {
-          s.style.zoom = '';
-        });
-      }
-    }
-    window.addEventListener('resize', adjustMobileFit);
 
     // 初期化
     window.addEventListener("DOMContentLoaded", () => {
@@ -565,5 +547,6 @@
       setStep(state.level);
     });
   </script>
+  <script src="mobile-fit.js"></script>
 </body>
 </html>
