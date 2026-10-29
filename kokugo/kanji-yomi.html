@@ -146,12 +146,10 @@
       .pill-sub { display: none; }
       .step-pills { display: flex; }
       .step-pill { flex: 1; padding: 6px 4px; font-size: 0.76rem; white-space: nowrap; }
-      .toolbar-actions { flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 2px; }
-      .toolbar-actions > * { flex-shrink: 0; white-space: nowrap; }
-      .btn { padding: 6px 10px; font-size: 0.76rem; }
+      .toolbar-actions { gap: 6px; }
+      .toolbar-actions > * { flex: 1 1 auto; white-space: nowrap; }
+      .btn { justify-content: center; min-height: 36px; padding: 6px 10px; font-size: 0.76rem; }
       .toast { left: 16px; right: 16px; bottom: 16px; text-align: center; }
-      .preview-workspace { padding: 12px 0 48px; overflow-x: hidden; text-align: center; }
-      .sheet { zoom: 0.42; display: inline-block; text-align: left; margin: 0; vertical-align: top; }
     }
 
     @media print {
@@ -408,7 +406,6 @@
       const stepLabel = stepMap[state.level] || state.level;
       const kanjiChars = u.kanji ? u.kanji.map(x => x.k).join("") : "";
       document.title = `【${u.grade}年】かんじ よみ ${circled(u.no)}（${kanjiChars}）_${stepLabel}`;
-      adjustMobileFit();
     }
 
     /* ---------- UI ---------- */
@@ -501,27 +498,11 @@
     }
 
 
-    function adjustMobileFit() {
-      if (window.innerWidth <= 860) {
-        const ws = document.querySelector('.preview-workspace');
-        if (!ws) return;
-        const availableWidth = ws.clientWidth - 12;
-        // 210mm (標準96dpi換算で約794px)
-        const scale = Math.min(0.44, (availableWidth - 16) / 810);
-        document.querySelectorAll('.sheet').forEach(s => {
-          s.style.zoom = scale;
-        });
-      } else {
-        document.querySelectorAll('.sheet').forEach(s => {
-          s.style.zoom = '';
-        });
-      }
-    }
-    window.addEventListener('resize', adjustMobileFit);
 
     initFromURL();
     renderSidebar();
     setStep(state.level);
   </script>
+  <script src="mobile-fit.js"></script>
 </body>
 </html>

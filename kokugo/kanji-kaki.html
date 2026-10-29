@@ -170,8 +170,7 @@
       .btn-menu { padding: 5px 10px; font-size: 0.78rem; }
       .current-unit-name { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .top-toolbar { padding: 10px 14px; }
-      .preview-workspace { padding: 12px 6px; overflow-x: auto; }
-      .sheet { width: 210mm; min-width: 210mm; }
+      .preview-workspace { padding: 12px 6px; }
     }
 
     /* ===== 学習用フォント（教科書体）の適用先 ===== */
@@ -448,7 +447,6 @@
       const stepLabel = stepMap[state.level] || state.level;
       const kanjiChars = u.kanji ? u.kanji.map(x => x.k).join("") : "";
       document.title = `【${u.grade}年】かんじ かき ${circled(u.no)}（${kanjiChars}）_${stepLabel}`;
-      adjustMobileFit();
     }
 
     /* ---------- UI ---------- */
@@ -549,26 +547,11 @@
       if (s && ["step1", "step2", "step3", "all"].includes(s)) state.level = s;
     }
 
-    function adjustMobileFit() {
-      if (window.innerWidth <= 860) {
-        const ws = document.querySelector('.preview-workspace');
-        if (!ws) return;
-        const availableWidth = ws.clientWidth - 12;
-        const scale = Math.min(0.44, (availableWidth - 16) / 810);
-        document.querySelectorAll('.sheet').forEach(s => {
-          s.style.zoom = scale;
-        });
-      } else {
-        document.querySelectorAll('.sheet').forEach(s => {
-          s.style.zoom = '';
-        });
-      }
-    }
-    window.addEventListener('resize', adjustMobileFit);
 
     initFromURL();
     renderSidebar();
     setStep(state.level);
   </script>
+  <script src="mobile-fit.js"></script>
 </body>
 </html>
