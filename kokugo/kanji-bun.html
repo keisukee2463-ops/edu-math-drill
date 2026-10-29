@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ゆっくり・すっきり たんぶん かんじプリント（短文で書く）</title>
+  <title>すっきりプリント たんぶん かんじ（短文で書く）</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
@@ -94,9 +94,9 @@
 
     /* 今日の漢字ストリップ */
     .kanji-strip { display: flex; gap: 8px; margin-bottom: 14px; }
-    .kbox { flex: 1; border: 1.2px solid var(--ink); border-radius: 6px; text-align: center; padding: 4px 2px 5px; background: #fff; }
+    .kbox { flex: 1; border: 1px solid var(--border-soft); border-radius: 6px; text-align: center; padding: 4px 2px 5px; background: #fafaf9; }
     .kbox .kk {
-      font-size: 1.8rem; line-height: 1.05; font-weight: 700; color: var(--ink);
+      font-size: 1.8rem; line-height: 1.05; font-weight: 700; color: var(--text-main);
       font-family: var(--font-kyokasho);
     }
     .kbox .kr { font-size: 0.68rem; color: var(--text-sub); line-height: 1.25; min-height: 1.25em; margin-top: 3px; }
@@ -104,9 +104,11 @@
 
     /* 行（短文問題＋こたえ欄）*/
     .rows { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .row { display: grid; grid-template-columns: 1fr 34mm; align-items: stretch; border: 1.2px solid #a1a1aa; border-radius: 8px; background: #fff; min-height: 35mm; }
+    .row { display: grid; grid-template-columns: 1fr 34mm; align-items: stretch; border: 1px solid var(--border-soft); border-radius: 8px; background: #fff; min-height: 35mm; }
+    .row.is-rei { background: #fafaf9; border-color: var(--border-mid); }
     .no-fold .row { grid-template-columns: 1fr; }
     .no-fold .ans-cell { display: none; }
+    .rei-badge { border: 1.2px solid var(--ink); border-radius: 4px; padding: 1px 7px; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; letter-spacing: 0.04em; }
 
     .item-sent-box { padding: 8px 16px; display: flex; align-items: center; gap: 14px; min-height: 35mm; }
     .item-sent-box .q-no {
@@ -213,7 +215,7 @@
         <a href="kanji-puzzle.html">合体パズル</a>
       </div>
       <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
-      <div class="brand-main">ゆっくり・すっきり<br/>たんぶん かんじプリント</div>
+      <div class="brand-main">すっきりプリント<br/>たんぶん かんじ</div>
       <div class="brand-count" id="unitCountLabel"></div>
       <div class="brand-note">
         <p>文の中で漢字を書く力を育てるプリントです。学校・家庭・放課後等デイサービスで、自由に印刷してお使いください（無料・登録不要）。</p>
@@ -302,12 +304,12 @@
     function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
     /* 短文のインラインマスHTML生成 */
-    function makeSentInlineHtml(sentStr, targetK, level) {
+    function makeSentInlineHtml(sentStr, targetK, level, isRei = false) {
       const nodes = parse(sentStr);
       let html = "";
       let targetReading = "";
       let replaced = false;
-      const isTrace = (level === "step1");
+      const isTrace = (level === "step1" || isRei);
 
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
@@ -320,9 +322,10 @@
             // 漢字を書くマス（上に読み）
             const cellChar = isTrace ? esc(targetK) : "";
             const traceClass = isTrace ? "trace" : "blank";
+            const traceStyle = isRei ? 'style="color:#52525b; font-weight:700;"' : '';
             html += `<span class="inline-kaki-wrap">` +
                     `<span class="inline-ruby">${esc(n.r)}</span>` +
-                    `<span class="kaki-cell-lg ${traceClass}">${cellChar}</span>` +
+                    `<span class="kaki-cell-lg ${traceClass}" ${traceStyle}>${cellChar}</span>` +
                     `</span>`;
           } else {
             // 対象外の漢字（または2回目以降）はふりがな付きで表示
@@ -357,11 +360,8 @@
 
       // 5文字の文リスト
       const items = u.kanji.map(kobj => {
-        const res = makeSentInlineHtml(kobj.sent, kobj.k, level);
         return {
           targetK: kobj.k,
-          reading: res.targetReading,
-          sentHtml: res.html,
           rawSent: kobj.sent
         };
       });
@@ -378,16 +378,18 @@
 
       let rows = "";
       list.forEach((item, idx) => {
-        const qNum = idx + 1;
-        rows += `<div class="row">` +
+        const isRei = (idx === 0);
+        const res = makeSentInlineHtml(item.rawSent, item.targetK, level, isRei);
+        const qNum = isRei ? `<span class="rei-badge">れい</span>` : `(${idx})`;
+        rows += `<div class="row ${isRei ? "is-rei" : ""}">` +
                 `<div class="item-sent-box">` +
-                `<span class="q-no">${qNum}</span>` +
-                `<div class="sent-content">${item.sentHtml}</div>` +
+                `<span class="q-no" style="${isRei ? 'background:transparent; width:auto;' : ''}">${qNum}</span>` +
+                `<div class="sent-content">${res.html}</div>` +
                 `</div>` +
                 `<div class="ans-cell">` +
                 (idx === 0 ? `<div class="ans-header">こたえ（おる）</div>` : ``) +
                 `<span class="ans-k-lg">${esc(item.targetK)}</span>` +
-                `<span class="ans-r-sub">（${esc(item.reading)}）</span>` +
+                `<span class="ans-r-sub">（${esc(res.targetReading)}）</span>` +
                 `</div>` +
                 `</div>`;
       });
@@ -408,7 +410,7 @@
         <div class="kanji-strip">${strip}</div>
         <div class="rows">${rows}</div>
         <div class="foot">
-          <span>ゆっくり・すっきり たんぶん かんじプリント</span>
+          <span>すっきりプリント たんぶん かんじ</span>
           <span>https://edu-drill.com/</span>
         </div>
       </section>`;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ゆっくり・すっきり かんじ よみプリント（1〜3年）</title>
+  <title>すっきりプリント かんじ よみ（1〜3年）</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
@@ -95,8 +95,8 @@
 
     /* 今日の漢字 */
     .kanji-strip { display: flex; gap: 8px; margin-bottom: 8px; }
-    .kbox { flex: 1; border: 1.2px solid var(--ink); border-radius: 6px; text-align: center; padding: 3px 2px 4px; }
-    .kbox .kk { font-size: 1.7rem; line-height: 1.05; font-weight: 700; }
+    .kbox { flex: 1; border: 1px solid var(--border-soft); border-radius: 6px; text-align: center; padding: 4px 2px 4px; background: #fafaf9; }
+    .kbox .kk { font-size: 1.7rem; line-height: 1.05; font-weight: 700; color: var(--text-main); }
     .kbox .kr { font-size: 0.66rem; color: var(--text-sub); line-height: 1.3; min-height: 1.3em; }
 
     /* 行（問題＋こたえ欄）*/
@@ -104,25 +104,26 @@
     .row { display: grid; grid-template-columns: 1fr 36mm; align-items: center; }
     .no-fold .row { grid-template-columns: 1fr; }
     .no-fold .ans-cell { display: none; }
-    .ans-cell { border-left: 1.5px dashed #71717a; padding: 0 0 0 3mm; font-size: 0.82rem; color: var(--ink); align-self: stretch;
+    .ans-cell { border-left: 1px dashed var(--border-mid); padding: 0 0 0 3.5mm; font-size: 0.82rem; color: var(--ink); align-self: stretch;
       display: flex; align-items: center; line-height: 1.3; }
     .ans-cell.head { font-size: 0.68rem; color: #71717a; align-items: flex-end; }
-    .sec-title { font-size: 0.92rem; font-weight: 700; padding: 5px 0 3px; }
+    .sec-title { font-size: 0.88rem; font-weight: 700; padding: 6px 0 3px; margin-top: 4px; }
     .sec-title span { font-size: 0.74rem; font-weight: 600; color: var(--text-sub); margin-left: 6px; }
-    .item { display: flex; align-items: center; gap: 8px; padding: 1mm 3mm 1mm 0; border-bottom: 1px dotted #d4d4d8; min-height: 12.4mm; }
-    .item .no { width: 1.6em; font-size: 0.86rem; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
+    .item { display: flex; align-items: center; gap: 10px; padding: 2.5mm 3mm 2.5mm 0; min-height: 15.5mm; }
+    .item.is-rei { background: #fafaf9; border-radius: 6px; padding: 2mm 3.5mm; margin-bottom: 2mm; border: 1px solid var(--border-soft); }
+    .item .no { width: 1.8em; font-size: 0.9rem; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
     .item .txt { font-size: 1.6rem; line-height: 1.7; color: var(--ink); width: 46mm; flex-shrink: 0; letter-spacing: 0.06em; }
     .item.sent .txt { font-size: 1.22rem; width: auto; flex: 1; letter-spacing: 0.02em; }
     .item .arrow { color: #a1a1aa; font-size: 0.85rem; flex-shrink: 0; }
     /* 読みを書くマス（1マス1文字） */
     .cells { display: flex; flex-shrink: 0; }
-    .cell { width: 10.5mm; height: 10.5mm; border: 1.3px solid #52525b; margin-left: -1.3px; display: flex; align-items: center;
-      justify-content: center; font-size: 1.35rem; color: #c4c4cc; background: #fff; }
+    .cell { width: 11mm; height: 11mm; border: 1.2px solid #71717a; margin-left: -1.2px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.35rem; color: #a1a1aa; background: #fff; border-radius: 2px; }
     .cell:first-child { margin-left: 0; }
-    .freebox { height: 10.5mm; border: 1.3px solid #52525b; flex-shrink: 0; background: #fff; }
-    .item.sent .cell { width: 9.5mm; height: 9.5mm; font-size: 1.2rem; }
-    .item.sent .freebox { height: 9.5mm; }
-    .rei-badge { border: 1.2px solid var(--ink); border-radius: 4px; padding: 0 6px; font-size: 0.68rem; flex-shrink: 0; }
+    .freebox { height: 11mm; border: 1.2px solid #71717a; flex-shrink: 0; background: #fff; border-radius: 2px; }
+    .item.sent .cell { width: 10mm; height: 10mm; font-size: 1.25rem; }
+    .item.sent .freebox { height: 10mm; }
+    .rei-badge { border: 1.2px solid var(--ink); border-radius: 4px; padding: 1px 7px; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; letter-spacing: 0.04em; }
     ruby rt { font-size: 0.5em; letter-spacing: 0; color: var(--ink); }
     ruby rt.hide { visibility: hidden; }
     .tg { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
@@ -185,7 +186,7 @@
         <a href="kanji-puzzle.html">合体パズル</a>
       </div>
       <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
-      <div class="brand-main">ゆっくり・すっきり<br/>かんじ よみプリント</div>
+      <div class="brand-main">すっきりプリント<br/>かんじ よみ</div>
       <div class="brand-count" id="unitCountLabel"></div>
       <div class="brand-note">
         <p>学校・家庭・放課後等デイサービスで、自由に印刷してお使いください（無料・登録不要）。再配布・販売はご遠慮ください。</p>
@@ -312,10 +313,13 @@
 
     /* ---------- シート組み立て ---------- */
     function getUnit(id) { return ALL_UNITS.find(u => u.id === id) || ALL_UNITS[0]; }
-    /* 読みを書くマス: step1=全部なぞり / step2=1字目だけなぞり / step3=マス目なしの□ */
-    function cellsHTML(reading, level) {
+    /* 読みを書くマス: step1=全部なぞり / step2=1字目だけなぞり / step3=マス目なしの□ / isRei=手本 */
+    function cellsHTML(reading, level, isRei = false) {
       const ch = [...reading];
-      if (level === "step3") return `<div class="freebox" style="width:${Math.max(ch.length + 1, 4) * 10}mm"></div>`;
+      if (isRei) {
+        return `<div class="cells">` + ch.map(c => `<div class="cell" style="color:#52525b; font-weight:700;">${esc(c)}</div>`).join("") + `</div>`;
+      }
+      if (level === "step3") return `<div class="freebox" style="width:${Math.max(ch.length + 1, 4) * 11}mm"></div>`;
       return `<div class="cells">` + ch.map((c, i) => {
         const t = level === "step1" || i === 0 ? esc(c) : "";
         return `<div class="cell">${t}</div>`;
@@ -326,9 +330,22 @@
     function buildSheet(unitId, level, pageLabel) {
       const u = getUnit(unitId), info = STEP_INFO[level];
       const uk = u.kanji.map(x => x.k).join("");
-      const words = [], sents = [];
-      u.kanji.forEach(x => { x.words.forEach(w => words.push(w)); sents.push(x.sent); });
-      const W = shuffled(words, state.seed), S = shuffled(sents, state.seed * 7);
+
+      // 各漢字から代表熟語を1つずつ選出（合計5語前後）し、シャッフル
+      const wordCand = [];
+      u.kanji.forEach((x, kIdx) => {
+        if (x.words && x.words.length > 0) {
+          const wIdx = (state.seed + kIdx) % x.words.length;
+          wordCand.push(x.words[wIdx]);
+        }
+      });
+      const W = shuffled(wordCand, state.seed);
+      // 1問目を「れい」とし、残りを通常問題にする
+      const reiWord = W[0];
+      const normalWords = W.slice(1);
+
+      // 短文は3問に絞り込み
+      const S = shuffled(u.kanji.map(x => x.sent), state.seed * 7).slice(0, 3);
 
       const strip = u.kanji.map(x => {
         const kr = level === "step1" ? `${esc(x.on)}${x.kun ? "<br>" + esc(x.kun) : ""}` : "";
@@ -336,19 +353,30 @@
       }).join("");
 
       let n = 0, rows = "";
-      rows += `<div class="row"><div class="sec-title">1 じゅくごの よみを かこう<span>（${W.length}もん）</span></div><div class="ans-cell head">こたえ ←ここで おる</div></div>`;
-      W.forEach((w, idx) => {
+      rows += `<div class="row"><div class="sec-title">1 じゅくごの よみを かこう<span>（れい＋${normalWords.length}もん）</span></div><div class="ans-cell head">こたえ ←ここで おる</div></div>`;
+
+      // れい（例題）
+      if (reiWord) {
+        const r = readingOf(reiWord.w);
+        rows += `<div class="row"><div class="item is-rei"><span class="rei-badge">れい</span><span class="txt">${renderText(reiWord.w, "step1", uk, false)}</span>` +
+                `<span class="arrow">▶</span>${cellsHTML(r, level, true)}</div><div class="ans-cell"><span style="color:#71717a; font-weight:600;">（れい）</span></div></div>`;
+      }
+
+      // 通常の熟語問題
+      normalWords.forEach(w => {
         n++;
         const r = readingOf(w.w);
-        rows += `<div class="row"><div class="item"><span class="no">${n}</span><span class="txt">${renderText(w.w, level, uk, false)}</span>` +
-                `<span class="arrow">▶</span>${cellsHTML(r, level)}</div><div class="ans-cell">${esc(r)}</div></div>`;
+        rows += `<div class="row"><div class="item"><span class="no">(${n})</span><span class="txt">${renderText(w.w, level, uk, false)}</span>` +
+                `<span class="arrow">▶</span>${cellsHTML(r, level, false)}</div><div class="ans-cell">${esc(r)}</div></div>`;
       });
-      rows += `<div class="row"><div class="sec-title">2 ぶんの なかで よもう<span>（せんの ことばの よみを マスに かこう）</span></div><div class="ans-cell"></div></div>`;
+
+      // 短文問題
+      rows += `<div class="row"><div class="sec-title" style="margin-top:10px;">2 ぶんの なかで よもう<span>（${S.length}もん・せんの ことばの よみを マスに かこう）</span></div><div class="ans-cell"></div></div>`;
       S.forEach(s => {
         n++;
         const ts = targetAnswers(s, uk);
-        rows += `<div class="row"><div class="item sent"><span class="no">${n}</span><span class="txt">${renderText(s, level, uk, true)}</span>` +
-                `<span class="arrow">▶</span>${ts.map(t => cellsHTML(t.r, level)).join("")}</div>` +
+        rows += `<div class="row"><div class="item sent"><span class="no">(${n})</span><span class="txt">${renderText(s, level, uk, true)}</span>` +
+                `<span class="arrow">▶</span>${ts.map(t => cellsHTML(t.r, level, false)).join("")}</div>` +
                 `<div class="ans-cell">${ts.map(t => esc(t.k + "→" + t.r)).join("、")}</div></div>`;
       });
 
@@ -364,7 +392,7 @@
         <div class="guide">${info.guide}</div>
         <div class="kanji-strip">${strip}</div>
         <div class="rows">${rows}</div>
-        <div class="foot"><span>ゆっくり・すっきり かんじ よみプリント</span><span>かんじ よみ ${circled(u.no)}</span></div>
+        <div class="foot"><span>すっきりプリント かんじ よみ</span><span>かんじ よみ ${circled(u.no)}</span></div>
       </section>`;
     }
 

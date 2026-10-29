@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ゆっくり・すっきり かんじ かきプリント（3年）</title>
+  <title>すっきりプリント かんじ かき（3年）</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
@@ -94,8 +94,8 @@
 
     /* 今日の漢字ストリップ */
     .kanji-strip { display: flex; gap: 8px; margin-bottom: 7px; }
-    .kbox { flex: 1; border: 1.2px solid var(--ink); border-radius: 6px; text-align: center; padding: 3px 2px 4px; background: #fff; }
-    .kbox .kk { font-size: 1.7rem; line-height: 1.05; font-weight: 700; color: var(--ink); }
+    .kbox { flex: 1; border: 1px solid var(--border-soft); border-radius: 6px; text-align: center; padding: 4px 2px 4px; background: #fafaf9; }
+    .kbox .kk { font-size: 1.7rem; line-height: 1.05; font-weight: 700; color: var(--text-main); }
     .kbox .kr { font-size: 0.64rem; color: var(--text-sub); line-height: 1.25; min-height: 1.25em; margin-top: 2px; }
     /* ステップ3では漢字本体を隠す */
     .kbox.hidden-kanji .kk { color: #d4d4d8; font-size: 1.4rem; line-height: 1.3; }
@@ -105,15 +105,17 @@
     .row { display: grid; grid-template-columns: 1fr 34mm; align-items: center; }
     .no-fold .row { grid-template-columns: 1fr; }
     .no-fold .ans-cell { display: none; }
-    .ans-cell { border-left: 1.5px dashed #71717a; padding: 0 0 0 3mm; font-size: 0.82rem; color: var(--ink); align-self: stretch;
+    .ans-cell { border-left: 1px dashed var(--border-mid); padding: 0 0 0 3.5mm; font-size: 0.82rem; color: var(--ink); align-self: stretch;
       display: flex; align-items: center; line-height: 1.3; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .ans-cell.head { font-size: 0.68rem; color: #71717a; align-items: flex-end; }
     .ans-k { font-size: 1.25rem; font-weight: 700; color: var(--ink); margin-right: 3px; }
     .ans-sub { font-size: 0.72rem; color: var(--text-sub); }
-    .sec-title { font-size: 0.9rem; font-weight: 700; padding: 4px 0 2px; }
+    .sec-title { font-size: 0.88rem; font-weight: 700; padding: 6px 0 3px; margin-top: 4px; }
     .sec-title span { font-size: 0.72rem; font-weight: 600; color: var(--text-sub); margin-left: 6px; }
-    .item { display: flex; align-items: center; gap: 8px; padding: 1mm 2mm 1mm 0; border-bottom: 1px dotted #d4d4d8; min-height: 12.8mm; }
-    .item .no { width: 1.6em; font-size: 0.86rem; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
+    .item { display: flex; align-items: center; gap: 10px; padding: 2.5mm 2mm 2.5mm 0; min-height: 15.5mm; }
+    .item.is-rei { background: #fafaf9; border-radius: 6px; padding: 2mm 3.5mm; margin-bottom: 2mm; border: 1px solid var(--border-soft); }
+    .rei-badge { border: 1.2px solid var(--ink); border-radius: 4px; padding: 1px 7px; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; letter-spacing: 0.04em; }
+    .item .no { width: 1.8em; font-size: 0.9rem; font-weight: 700; color: var(--ink); text-align: right; flex-shrink: 0; }
     .item .txt { font-size: 1.4rem; line-height: 1.5; color: var(--ink); width: 56mm; flex-shrink: 0; letter-spacing: 0.05em; }
     .item.sent .txt { font-size: 1.15rem; width: auto; flex: 1; letter-spacing: 0.02em; }
     .item .arrow { color: #a1a1aa; font-size: 0.85rem; flex-shrink: 0; }
@@ -193,7 +195,7 @@
         <a href="kanji-puzzle.html">合体パズル</a>
       </div>
       <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
-      <div class="brand-main">ゆっくり・すっきり<br/>かんじ かきプリント</div>
+      <div class="brand-main">すっきりプリント<br/>かんじ かき</div>
       <div class="brand-count" id="unitCountLabel"></div>
       <div class="brand-note">
         <p>学校・家庭・放課後等デイサービスで、自由に印刷してお使いください（無料・登録不要）。再配布・販売はご遠慮ください。</p>
@@ -324,7 +326,10 @@
     function circled(n) { return "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿"[n - 1] || String(n); }
 
     /* 漢字を書くマス（十字リーダー入り） */
-    function kakiCellHTML(kanjiChar, level) {
+    function kakiCellHTML(kanjiChar, level, isRei = false) {
+      if (isRei) {
+        return `<div class="kaki-cell trace" style="color:#52525b; font-weight:600;">${esc(kanjiChar)}</div>`;
+      }
       if (level === "step1") {
         return `<div class="kaki-cell trace">${esc(kanjiChar)}</div>`;
       }
@@ -336,31 +341,37 @@
       const u = getUnit(unitId), info = STEP_INFO[level];
       const uk = u.kanji.map(x => x.k).join("");
 
-      // 語句問題（10問）と短文問題（5問）のリストを作成
-      const wordItems = [];
-      const sentItems = [];
-
-      u.kanji.forEach(kobj => {
-        kobj.words.forEach(w => {
+      // 各漢字から代表語句を1つずつ選出（合計5問前後）し、シャッフル
+      const wordCand = [];
+      u.kanji.forEach((kobj, kIdx) => {
+        if (kobj.words && kobj.words.length > 0) {
+          const wIdx = (state.seed + kIdx) % kobj.words.length;
+          const w = kobj.words[wIdx];
           const res = makeKakiPrompt(w.w, kobj.k);
-          wordItems.push({
+          wordCand.push({
             targetK: kobj.k,
             reading: res.targetReading,
             promptHtml: res.html,
             rawWord: w.w
           });
-        });
+        }
+      });
+      const W = shuffled(wordCand, state.seed);
+      const reiWord = W[0];
+      const normalWords = W.slice(1);
+
+      // 短文問題は3問に絞り込み
+      const sentCand = [];
+      u.kanji.forEach(kobj => {
         const sRes = makeKakiPrompt(kobj.sent, kobj.k);
-        sentItems.push({
+        sentCand.push({
           targetK: kobj.k,
           reading: sRes.targetReading,
           promptHtml: sRes.html,
           rawSent: kobj.sent
         });
       });
-
-      const W = shuffled(wordItems, state.seed);
-      const S = shuffled(sentItems, state.seed * 7);
+      const S = shuffled(sentCand, state.seed * 7).slice(0, 3);
 
       // 今日の漢字ストリップ
       // ステップ3では漢字本体を隠す
@@ -372,22 +383,34 @@
       }).join("");
 
       let n = 0, rows = "";
-      rows += `<div class="row"><div class="sec-title">1 じゅくごの かんじを かこう<span>（${W.length}もん）</span></div><div class="ans-cell head">こたえ ←ここで おる</div></div>`;
-      W.forEach(item => {
+      rows += `<div class="row"><div class="sec-title">1 じゅくごの かんじを かこう<span>（れい＋${normalWords.length}もん）</span></div><div class="ans-cell head">こたえ ←ここで おる</div></div>`;
+
+      // れい（例題）
+      if (reiWord) {
+        rows += `<div class="row">` +
+                `<div class="item is-rei"><span class="rei-badge">れい</span><span class="txt">${reiWord.promptHtml}</span>` +
+                `<span class="arrow">▶</span>${kakiCellHTML(reiWord.targetK, level, true)}</div>` +
+                `<div class="ans-cell"><span style="color:#71717a; font-weight:600;">（れい）</span></div>` +
+                `</div>`;
+      }
+
+      // 通常語句問題
+      normalWords.forEach(item => {
         n++;
         rows += `<div class="row">` +
-                `<div class="item"><span class="no">${n}</span><span class="txt">${item.promptHtml}</span>` +
-                `<span class="arrow">▶</span>${kakiCellHTML(item.targetK, level)}</div>` +
+                `<div class="item"><span class="no">(${n})</span><span class="txt">${item.promptHtml}</span>` +
+                `<span class="arrow">▶</span>${kakiCellHTML(item.targetK, level, false)}</div>` +
                 `<div class="ans-cell"><span class="ans-k">${esc(item.targetK)}</span><span class="ans-sub">（${esc(item.reading)}）</span></div>` +
                 `</div>`;
       });
 
-      rows += `<div class="row"><div class="sec-title">2 ぶんの なかで かこう<span>（せんの ことばの かんじを かこう）</span></div><div class="ans-cell"></div></div>`;
+      // 短文問題
+      rows += `<div class="row"><div class="sec-title" style="margin-top:10px;">2 ぶんの なかで かこう<span>（${S.length}もん・せんの ことばの かんじを かこう）</span></div><div class="ans-cell"></div></div>`;
       S.forEach(item => {
         n++;
         rows += `<div class="row">` +
-                `<div class="item sent"><span class="no">${n}</span><span class="txt">${item.promptHtml}</span>` +
-                `<span class="arrow">▶</span>${kakiCellHTML(item.targetK, level)}</div>` +
+                `<div class="item sent"><span class="no">(${n})</span><span class="txt">${item.promptHtml}</span>` +
+                `<span class="arrow">▶</span>${kakiCellHTML(item.targetK, level, false)}</div>` +
                 `<div class="ans-cell"><span class="ans-k">${esc(item.targetK)}</span><span class="ans-sub">（${esc(item.reading)}）</span></div>` +
                 `</div>`;
       });
@@ -404,7 +427,7 @@
         <div class="guide">${info.guide}</div>
         <div class="kanji-strip">${strip}</div>
         <div class="rows">${rows}</div>
-        <div class="foot"><span>ゆっくり・すっきり かんじ かきプリント</span><span>かんじ かき ${circled(u.no)}</span></div>
+        <div class="foot"><span>すっきりプリント かんじ かき</span><span>かんじ かき ${circled(u.no)}</span></div>
       </section>`;
     }
 

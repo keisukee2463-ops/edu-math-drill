@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ゆっくり・すっきり にたかんじ えらびプリント（3年）</title>
+  <title>すっきりプリント にたかんじ えらび（3年）</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
@@ -100,17 +100,20 @@
     .guide { font-size: 0.82rem; color: var(--text-sub); }
 
     /* 見分けポイント（フォーカスカード） */
-    .focus-card { background: #fafaf9; border: 1.2px solid var(--ink); border-radius: 6px; padding: 6px 12px; margin-bottom: 12px;
+    .focus-card { background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; padding: 7px 12px; margin-bottom: 12px;
       display: flex; align-items: center; gap: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .focus-badge { font-size: 0.7rem; font-weight: 800; background: var(--ink); color: #fff; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+    .focus-badge { font-size: 0.7rem; font-weight: 800; background: var(--text-main); color: #fff; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
     .focus-text { font-size: 0.86rem; font-weight: 700; color: var(--ink); letter-spacing: 0.03em; }
 
     /* 問題行グリッド（問題 + 折って隠す答え欄） */
-    .rows { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-    .row { display: grid; grid-template-columns: 1fr 38mm; align-items: stretch; min-height: 27mm; border-bottom: 1px dashed #d4d4d8; }
-    .row:last-child { border-bottom: none; }
+    .rows { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .row { display: grid; grid-template-columns: 1fr 38mm; align-items: stretch; min-height: 28mm; padding: 3mm 0; }
+    .row.is-rei { background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; padding: 3mm 8px; margin-bottom: 3mm; }
     .no-fold .row { grid-template-columns: 1fr; }
     .no-fold .ans-cell { display: none; }
+    .ans-cell { border-left: 1px dashed var(--border-mid); padding: 0 0 0 3.5mm; font-size: 0.82rem; color: var(--ink); align-self: stretch;
+      display: flex; flex-direction: column; justify-content: center; line-height: 1.3; }
+    .rei-badge { border: 1.2px solid var(--ink); border-radius: 4px; padding: 1px 7px; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; letter-spacing: 0.04em; }
 
     /* 問題本体 */
     .item-body { padding: 4px 6px 4px 0; display: flex; flex-direction: column; justify-content: center; }
@@ -203,7 +206,7 @@
         <a href="kanji-puzzle.html">合体パズル</a>
       </div>
       <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
-      <div class="brand-main">ゆっくり・すっきり<br/>にたかんじ えらびプリント</div>
+      <div class="brand-main">すっきりプリント<br/>にたかんじ えらび</div>
       <div class="brand-count" id="unitCountLabel">全 24 単元（小1〜3年 似ている漢字対応）</div>
       <div class="brand-note">
         <p>・<strong>ステップ1</strong>：2択からえらんで○をつける（書く負担ゼロ・視覚弁別）。</p>
@@ -304,7 +307,8 @@
 
       let rowsHtml = "";
       unit.items.forEach((item, idx) => {
-        const num = idx + 1;
+        const isRei = (idx === 0);
+        const numLabel = isRei ? `<span class="rei-badge">れい</span>` : `(${idx})`;
         // 選択肢の表示順（シャッフル設定）
         let choices = [...item.pair];
         if (state.shuffleOrder && (idx % 2 === 1)) {
@@ -313,25 +317,28 @@
 
         let sentInnerHtml = "";
         if (level === "step1") {
-          // ステップ1：文中の2択に○をつける
+          // ステップ1：文中の2択に○をつける（れいは最初から○付きのお手本）
           const opt1 = esc(choices[0]);
           const opt2 = esc(choices[1]);
+          const opt1Style = isRei && choices[0] === item.ans ? 'style="border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); font-weight:800;"' : '';
+          const opt2Style = isRei && choices[1] === item.ans ? 'style="border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); font-weight:800;"' : '';
           sentInnerHtml = `${esc(item.sentPre)} ` +
             `<span class="choice-wrap-step1">` +
               `<span class="choice-ruby">${esc(item.yomi)}</span>` +
               `<span class="choice-box-step1">` +
-                `<span class="choice-opt">${opt1}</span>` +
+                `<span class="choice-opt" ${opt1Style}>${opt1}</span>` +
                 `<span class="choice-sep">／</span>` +
-                `<span class="choice-opt">${opt2}</span>` +
+                `<span class="choice-opt" ${opt2Style}>${opt2}</span>` +
               `</span>` +
             `</span> ` +
             `${esc(item.sentPost)}`;
-        } else if (level === "step2") {
-          // ステップ2：文中のマス（うすいお手本文字）＋選択肢ヒント
+        } else if (level === "step2" || isRei) {
+          // ステップ2（またはれい）：文中のマス（うすいお手本文字）＋選択肢ヒント
+          const traceColor = isRei ? 'style="color:#52525b; font-weight:700;"' : '';
           sentInnerHtml = `${esc(item.sentPre)} ` +
             `<span class="inline-cell-wrap">` +
               `<span class="cell-ruby">${esc(item.yomi)}</span>` +
-              `<span class="cell-box"><span class="cell-char trace">${esc(item.ans)}</span></span>` +
+              `<span class="cell-box"><span class="cell-char trace" ${traceColor}>${esc(item.ans)}</span></span>` +
             `</span> ` +
             `${esc(item.sentPost)}` +
             `<span class="choice-hint-tag"><span class="hint-label">えらぶ:</span>［ ${esc(choices.join(" ／ "))} ］</span>`;
@@ -347,9 +354,10 @@
         }
 
         // こたえ欄
+        const ansHead = isRei ? `(れい) こたえ` : `(${idx}) こたえ`;
         const ansHtml = `
           <div class="ans-cell">
-            <div class="ans-head">(${num}) こたえ</div>
+            <div class="ans-head">${ansHead}</div>
             <div class="ans-main-wrap">
               <span class="ans-char">${esc(item.ans)}</span>
               <span class="ans-yomi">（${esc(item.yomi)}）</span>
@@ -359,10 +367,10 @@
         `;
 
         rowsHtml += `
-          <div class="row">
+          <div class="row ${isRei ? "is-rei" : ""}">
             <div class="item-body">
               <div class="item-sent-wrap">
-                <span class="item-num">(${num})</span>
+                <span class="item-num">${numLabel}</span>
                 ${sentInnerHtml}
               </div>
             </div>
