@@ -1076,18 +1076,17 @@
         font-size: 0.76rem;
         white-space: nowrap;
       }
+      /* 横スクロールで隠れないよう折り返す */
       .toolbar-actions {
-        flex-wrap: nowrap;
-        overflow-x: auto;
         gap: 6px;
-        padding-bottom: 2px;
-        -webkit-overflow-scrolling: touch;
       }
       .toolbar-actions > * {
-        flex-shrink: 0;
+        flex: 1 1 auto;
         white-space: nowrap;
       }
       .btn, .page-select {
+        justify-content: center;
+        min-height: 36px;
         padding: 6px 10px;
         font-size: 0.76rem;
       }
@@ -1101,16 +1100,19 @@
         text-align: center;
       }
       .preview-workspace {
-        padding: 12px 0 48px;
+        padding: 12px 8px 48px;
         overflow-x: hidden;
-        text-align: center;
       }
+      #sheetsContainer {
+        align-items: center;
+        gap: 16px;
+      }
+      /* 倍率は fitSheetsToScreen() が画面幅に合わせて設定する */
       .sheet {
         zoom: 0.42;
-        display: inline-block;
-        text-align: left;
         margin: 0;
-        vertical-align: top;
+        min-height: 0;
+        flex-shrink: 0;
       }
     }
 
@@ -8355,7 +8357,19 @@ function wrapSheet(title, pageLabel, gridClass, itemsHtml) {
       }
       container.innerHTML = html;
       updateCurrentUnitName();
+      fitSheetsToScreen();
     }
+
+    // スマホでは A4 紙面（210mm ≒ 794px）を画面幅いっぱいに縮小して表示する
+    function fitSheetsToScreen() {
+      const ws = document.querySelector('.preview-workspace');
+      const isMobile = window.matchMedia('(max-width: 860px)').matches;
+      const zoom = isMobile && ws ? Math.min(1, (ws.clientWidth - 16) / 794) : '';
+      document.querySelectorAll('.sheet').forEach(s => {
+        s.style.zoom = zoom;
+      });
+    }
+    window.addEventListener('resize', fitSheetsToScreen);
 
     initFromURL();
     renderSidebar();
