@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>すっきりプリント くらし｜お金・カレンダーの無料プリント（特別支援にも）</title>
+  <meta name="description" content="お金をかぞえる・ちょうど はらう・かいもの・おつり・カレンダーの無料プリント。なぞり→補助つき→自力の3ステップで、数字を変えて何枚でも。特別支援学級・家庭・放課後等デイサービスで使えます。" />
+  <link rel="canonical" href="https://edu-drill.com/seikatsu/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="すっきりプリント" />
+  <meta property="og:title" content="すっきりプリント くらし｜お金・カレンダーの無料プリント" />
+  <meta property="og:description" content="お金をかぞえる・ちょうど はらう・かいもの・おつり・カレンダー。3ステップで、数字を変えて何枚でも作れる無料プリント。" />
+  <meta property="og:url" content="https://edu-drill.com/seikatsu/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-ui: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+      --bg-app: #f6f5f2; --bg-panel: #ffffff; --bg-subtle: #efede8;
+      --text-main: #1c1917; --text-sub: #57534e; --text-muted: #a8a29e;
+      --border-soft: #e7e5e4; --border-mid: #d6d3d1;
+      --accent: #a15c07; --accent-soft: #fdf3e3; --ink: #18181b; --ans-red: #c2410c;
+      --trace: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-ui); background: var(--bg-app); color: var(--text-main);
+      display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+    /* ====== サイドバー ====== */
+    .sidebar { width: 300px; background: var(--bg-panel); border-right: 1px solid var(--border-soft);
+      display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; overflow-y: auto; }
+    .brand-box { padding: 20px 18px 16px; border-bottom: 1px solid var(--border-soft); }
+    .subject-switch { display: flex; gap: 4px; margin-bottom: 12px; }
+    .subject-switch a { text-decoration: none; font-size: 0.7rem; font-weight: 700; padding: 5px 10px; border-radius: 6px;
+      color: var(--text-sub); background: var(--bg-subtle); }
+    .brand-kicker { font-size: 0.68rem; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .brand-main { font-size: 1.02rem; font-weight: 800; line-height: 1.35; }
+    .brand-count { font-size: 0.72rem; color: var(--text-sub); margin-top: 4px; font-weight: 600; }
+    .brand-note { font-size: 0.68rem; color: var(--text-sub); line-height: 1.55; margin-top: 10px; padding: 8px 10px;
+      background: #fafaf9; border: 1px solid var(--border-soft); border-radius: 6px; }
+    .unit-list { padding: 14px 12px 32px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .cat-group-title { font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: 0.05em;
+      margin-bottom: 6px; padding-left: 6px; border-left: 3px solid var(--accent); }
+    .unit-btn { width: 100%; text-align: left; background: transparent; border: 1px solid transparent; border-radius: 7px;
+      padding: 8px 10px; margin-bottom: 4px; cursor: pointer; display: flex; align-items: flex-start; gap: 8px;
+      font-family: inherit; text-decoration: none; color: inherit; }
+    .unit-btn:hover { background: #fafaf9; border-color: var(--border-soft); }
+    .unit-btn.active { background: var(--accent-soft); border-color: #f0cf9c; }
+    .unit-no-tag { font-size: 0.64rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+      background: var(--bg-subtle); color: var(--text-sub); white-space: nowrap; margin-top: 1px; }
+    .unit-btn.active .unit-no-tag { background: var(--accent); color: #fff; }
+    .unit-name { font-size: 0.82rem; font-weight: 700; line-height: 1.35; }
+    .unit-sub { font-size: 0.7rem; color: var(--text-sub); margin-top: 2px; }
+
+    /* ====== メイン ====== */
+    .main-wrap { margin-left: 300px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .top-toolbar { background: var(--bg-panel); border-bottom: 1px solid var(--border-soft); padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 30; flex-wrap: wrap; }
+    .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .drawer-toggle { display: none; background: none; border: 1px solid var(--border-mid); border-radius: 6px;
+      padding: 6px 10px; font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .level-tabs { display: flex; background: var(--bg-subtle); padding: 3px; border-radius: 8px; gap: 2px; }
+    .level-tab { border: none; background: transparent; padding: 6px 12px; font-size: 0.78rem; font-weight: 700;
+      color: var(--text-sub); border-radius: 6px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .level-tab.active { background: #fff; color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .btn { border: 1px solid var(--border-mid); background: #fff; padding: 7px 14px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .content-area { padding: 32px 24px 60px; display: flex; justify-content: center; }
+
+    /* ====== 用紙（A4縦） ====== */
+    .print-sheet { width: 210mm; min-height: 297mm; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      padding: 12mm 14mm 10mm; margin-bottom: 32px; display: flex; flex-direction: column; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 8px;
+      border-bottom: 2px solid var(--text-main); margin-bottom: 10px; gap: 12px; }
+    .sheet-title-box { display: flex; flex-direction: column; min-width: 0; }
+    .sheet-unit-kicker { font-size: 0.8rem; font-weight: 800; color: var(--accent); letter-spacing: 0.05em; }
+    .sheet-title { font-size: 1.3rem; font-weight: 900; letter-spacing: 0.03em; margin-top: 1px; word-break: keep-all; }
+    .sheet-level-badge { font-size: 0.78rem; font-weight: 700; color: #fff; background: var(--accent); padding: 3px 8px;
+      border-radius: 4px; display: inline-block; margin-top: 4px; align-self: flex-start; white-space: nowrap;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet-meta { display: flex; gap: 12px; align-items: flex-end; font-size: 0.85rem; flex-shrink: 0; }
+    .meta-box { border-bottom: 1px solid var(--border-mid); padding: 0 8px 3px; min-width: 100px; text-align: right; }
+    .meta-box.name-box { min-width: 160px; text-align: left; }
+    .sheet-lead { font-size: 0.85rem; line-height: 1.5; color: var(--text-sub); margin-bottom: 10px; padding: 6px 10px;
+      background: #fafaf9; border-left: 4px solid var(--accent); border-radius: 3px; }
+
+    .q-grid { display: flex; flex-direction: column; gap: 7px; flex: 1; }
+    .q-row { display: flex; align-items: stretch; border: 1px solid var(--border-soft); border-radius: 6px; padding: 6px 10px; }
+    .q-num { font-size: 0.95rem; font-weight: 900; width: 34px; color: var(--accent); flex-shrink: 0; padding-top: 2px; }
+    .rei-badge { font-size: 0.7rem; background: var(--accent); color: #fff; padding: 2px 5px; border-radius: 4px;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .q-body { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .q-text { font-size: 1.02rem; font-weight: 700; line-height: 1.5; }
+    .q-line { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 1.05rem; font-weight: 700; }
+    .hint { font-size: 0.8rem; color: #3f3f46; font-weight: 700; }
+
+    /* 書きこむ枠 */
+    .box { display: inline-flex; align-items: center; justify-content: center; min-width: 46px; height: 36px; padding: 0 6px;
+      border: 2px solid var(--ink); border-radius: 4px; font-size: 1.2rem; font-weight: 700; background: #fff; }
+    .box.sm { min-width: 34px; height: 30px; font-size: 1.05rem; }
+    .box.wide { min-width: 74px; }
+    .box .trace { color: var(--trace); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .box.frame { border-style: dashed; border-color: #71717a; }
+
+    /* お金 */
+    .coin-area { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+    .rooms { display: flex; gap: 6px; flex-wrap: wrap; }
+    .room { border: 1.5px solid #a8a29e; border-radius: 6px; padding: 4px 6px 6px; min-width: 96px; flex: 1;
+      display: flex; flex-direction: column; gap: 4px; }
+    .room .coin-area { zoom: 0.82; gap: 3px; }
+    .room-head { font-size: 0.8rem; font-weight: 800; color: #3f3f46; text-align: center; border-bottom: 1px dashed #d6d3d1; padding-bottom: 2px; }
+    .room-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 6px; font-size: 0.9rem; font-weight: 700; margin-top: auto; }
+    .room-foot span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+    .tag { display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--ink); border-radius: 4px 14px 14px 4px;
+      padding: 2px 12px 2px 8px; font-weight: 800; background: #fff; }
+    .tag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--ink); }
+    .place { display: inline-grid; grid-template-columns: repeat(3, 40px); border: 1.5px solid #71717a; border-radius: 4px; text-align: center; }
+    .place div { border-left: 1px solid #a1a1aa; font-size: 0.75rem; font-weight: 700; padding: 1px 0; color: #3f3f46; }
+    .place div:nth-child(3n+1) { border-left: none; }
+    .place .d { font-size: 1.15rem; height: 30px; border-top: 1px solid #a1a1aa; display: flex; align-items: center; justify-content: center; color: var(--ink); }
+    .choice { display: inline-flex; gap: 8px; }
+    .choice span { border: 1.5px solid var(--border-mid); border-radius: 16px; padding: 2px 12px; font-size: 0.95rem; }
+
+    /* カレンダー */
+    .cal-wrap { display: flex; justify-content: center; margin-bottom: 10px; }
+    .cal { border-collapse: collapse; }
+    .cal caption { font-size: 1.15rem; font-weight: 900; padding-bottom: 4px; }
+    .cal th, .cal td { width: 62px; height: 40px; border: 1.5px solid #a1a1aa; text-align: center; font-size: 1.15rem; font-weight: 700; position: relative; }
+    .cal th { height: 34px; font-size: 0.95rem; background: #f5f5f4; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .cal th ruby rt { font-size: 0.55rem; font-weight: 700; }
+    .cal .sun { color: #b91c1c; }
+    .cal .sat { color: #1d4ed8; }
+    .cal td.mark::after { content: ""; position: absolute; inset: 4px 10px; border: 2.5px solid var(--ink); border-radius: 50%; }
+    .cal td .qtag { position: absolute; top: 1px; left: 2px; font-size: 0.62rem; font-weight: 900; color: #3f3f46; }
+    .cal td.col-guide, .cal th.col-guide { background: #f4f4f5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* 右端：折って隠す答え欄 */
+    .fold-cut-zone { width: 92px; margin-left: 10px; border-left: 2px dashed #94a3b8; padding-left: 8px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+    .fold-label { font-size: 0.6rem; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
+    .ans-char { font-size: 0.95rem; font-weight: 900; color: var(--ans-red); line-height: 1.3; text-align: center; }
+    body.no-fold .fold-cut-zone { display: none; }
+
+    .sheet-footer { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-soft);
+      display: flex; justify-content: space-between; gap: 12px; font-size: 0.66rem; color: var(--text-muted); }
+
+    .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 35; }
+    .drawer-close { display: none; }
+
+    @media print {
+      @page { size: A4 portrait; margin: 0; }
+      body { background: #fff !important; display: block; }
+      .sidebar, .top-toolbar, .no-print { display: none !important; }
+      .main-wrap { margin-left: 0 !important; }
+      .content-area { padding: 0 !important; display: block; }
+      .print-sheet { box-shadow: none !important; margin: 0 !important; width: 210mm !important;
+        height: 297mm !important; min-height: 0 !important; overflow: hidden; break-after: page; }
+      .print-sheet:last-child { break-after: auto; }
+    }
+    @media screen and (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); transition: transform 0.2s; }
+      body.drawer-open .sidebar { transform: translateX(0); }
+      body.drawer-open .drawer-overlay { display: block; }
+      .main-wrap { margin-left: 0; }
+      .drawer-toggle { display: block; }
+      .drawer-close { display: block; position: absolute; right: 12px; top: 12px; font-size: 1.4rem; background: none; border: none; cursor: pointer; }
+    }
+  </style>
+</head>
+<body>
+  <div class="drawer-overlay" onclick="closeDrawer()"></div>
+
+  <aside class="sidebar no-print" id="sidebar">
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="閉じる">×</button>
+    <div class="brand-box">
+      <div class="subject-switch"><a href="../">← トップ</a></div>
+      <div class="brand-kicker">SMALL-STEP WORKSHEETS</div>
+      <div class="brand-main">すっきりプリント<br/>くらし（お金・カレンダー）</div>
+      <div class="brand-count" id="unitCountLabel"></div>
+      <div class="brand-note">
+        <p><strong>なぞり → 補助つき → じぶんで</strong></p>
+        <p>「数字を変える」で何枚でも作れます。お金の絵は本物の図柄ではなく、色・大きさ・穴・数字で見分ける形にしています。</p>
+      </div>
+    </div>
+    <div class="unit-list" id="unitList"></div>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="top-toolbar no-print">
+      <div class="toolbar-left">
+        <button class="drawer-toggle" onclick="openDrawer()">単元を選ぶ</button>
+        <div class="level-tabs">
+          <button class="level-tab" id="tab-step1" onclick="setStep('step1')">ステップ1（なぞり）</button>
+          <button class="level-tab" id="tab-step2" onclick="setStep('step2')">ステップ2（補助つき）</button>
+          <button class="level-tab" id="tab-step3" onclick="setStep('step3')">ステップ3（じぶんで）</button>
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn" onclick="shuffle()">数字を変える</button>
+        <button class="btn" id="foldBtn" onclick="toggleFold()">こたえ欄：あり</button>
+        <button class="btn" onclick="copyUnitLink()">リンク共有</button>
+        <button class="btn btn-primary" onclick="window.print()">印刷する</button>
+      </div>
+    </header>
+    <main class="content-area"><div id="sheetContainer"></div></main>
+  </div>
+
+  <div id="toastBox" style="display:none;position:fixed;bottom:24px;right:24px;background:#18181b;color:#fff;padding:10px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;z-index:99;"></div>
+
+  <script>
+  // ====================== 単元の一覧 ======================
+  const UNITS = [
+    { id: "okane-1", cat: "お金", no: "お金①", title: "おかねを かぞえよう①", sub: "10円と 1円", lead: "10円と 1円を へやに わけて かぞえよう。" },
+    { id: "okane-2", cat: "お金", no: "お金②", title: "おかねを かぞえよう②", sub: "100円・10円・1円", lead: "100円・10円・1円を へやに わけて かぞえよう。" },
+    { id: "okane-3", cat: "お金", no: "お金③", title: "おかねを かぞえよう③", sub: "5円・50円・500円も", lead: "おなじ おかねの なかまに わけて かぞえよう。あなが あるのは 5円と 50円。" },
+    { id: "okane-4", cat: "お金", no: "お金④", title: "ちょうど はらおう", sub: "ねふだを 見て おかねを えらぶ", lead: "ねふだと ちょうど おなじに なるように、100円・10円・1円を なんまい だすか 書こう。" },
+    { id: "okane-5", cat: "お金", no: "お金⑤", title: "かいもの（あわせて いくら）", sub: "2つ かう・たりるかな", lead: "2つ かうと あわせて いくら？ もっている おかねで かえるかな。" },
+    { id: "okane-6", cat: "お金", no: "お金⑥", title: "おつりは いくら", sub: "100円・500円で はらう", lead: "はらった おかねから ねだんを ひくと おつりが わかるよ。" },
+    { id: "cal-1", cat: "カレンダー", no: "カレンダー①", title: "なんようび かな", sub: "カレンダーを よもう", lead: "カレンダーで 日にちを さがして、上の ようびを 見よう。" },
+    { id: "cal-2", cat: "カレンダー", no: "カレンダー②", title: "つぎの日・1しゅうかん あと", sub: "日にちを すすめる・もどす", lead: "つぎの日は 1日 すすむ。1しゅうかんは 7日。カレンダーで たしかめよう。" }
+  ];
+  const STEP_NAME = { step1: "ステップ1：なぞり", step2: "ステップ2：補助つき", step3: "ステップ3：じぶんで" };
+  const state = { unit: "okane-1", step: "step1", seed: 1, fold: true };
+
+  // ====================== 乱数（seedから毎回同じ問題） ======================
+  function rng(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const ri = (r, lo, hi) => lo + Math.floor(r() * (hi - lo + 1));
+  const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
+  function shuffled(r, arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+  // れい（list[0]）と、ほかの問題どうしが重ならないように n 問つくる
+  function makeList(rei, gen, n, r) {
+    const seen = new Set([JSON.stringify(rei)]);
+    const list = [{ ...rei, isRei: true }];
+    let guard = 0;
+    while (list.length < n + 1 && guard++ < 500) {
+      const q = gen(r);
+      const k = JSON.stringify(q);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      list.push({ ...q, isRei: false });
+    }
+    return list;
+  }
+
+  // ====================== 部品 ======================
+  // mode: "trace"（うすい なぞり）/ "blank"（空欄）
+  function box(val, mode, cls) {
+    return `<span class="box ${cls || ""}">${mode === "trace" ? `<span class="trace">${val}</span>` : ""}</span>`;
+  }
+  // 硬貨（本物の図柄ではない。色・大きさ・穴・数字で見分ける）
+  const COIN = {
+    1:   { d: 34, fill: "#f4f4f5", stroke: "#71717a", text: "#3f3f46", hole: false },
+    5:   { d: 42, fill: "#fde68a", stroke: "#a16207", text: "#713f12", hole: true },
+    10:  { d: 39, fill: "#e7b38d", stroke: "#9a3412", text: "#7c2d12", hole: false },
+    50:  { d: 42, fill: "#e4e4e7", stroke: "#52525b", text: "#27272a", hole: true },
+    100: { d: 38, fill: "#d4d4d8", stroke: "#3f3f46", text: "#18181b", hole: false },
+    500: { d: 44, fill: "#fcd34d", stroke: "#854d0e", text: "#422006", hole: false }
+  };
+  function coin(v) {
+    const c = COIN[v], r = c.d / 2;
+    const fs = c.hole ? 10.5 : (v >= 100 ? 11.5 : 13);
+    const ty = c.hole ? r - 7.5 : r + 4.5;
+    return `<svg width="${c.d}" height="${c.d}" viewBox="0 0 ${c.d} ${c.d}" aria-label="${v}円">
+      <circle cx="${r}" cy="${r}" r="${r - 1.2}" fill="${c.fill}" stroke="${c.stroke}" stroke-width="2"/>
+      <circle cx="${r}" cy="${r}" r="${r - 4.5}" fill="none" stroke="${c.stroke}" stroke-width="0.8" stroke-dasharray="2 2"/>
+      ${c.hole ? `<circle cx="${r}" cy="${r}" r="4.8" fill="#fff" stroke="${c.stroke}" stroke-width="1.5"/>` : ""}
+      <text x="${r}" y="${ty}" text-anchor="middle" font-size="${fs}" font-weight="900" fill="${c.text}" font-family="BIZ UDPGothic, sans-serif">${v}</text>
+    </svg>`;
+  }
+  const coinsOf = (counts) => Object.keys(counts).map(Number).sort((a, b) => b - a).flatMap(v => Array(counts[v]).fill(v));
+  const total = (counts) => Object.entries(counts).reduce((s, [v, n]) => s + Number(v) * n, 0);
+  const fold = (txt) => `<div class="fold-cut-zone"><div class="fold-label">こたえ</div><div class="ans-char">${txt}</div></div>`;
+  const ITEMS = ["えんぴつ", "けしゴム", "ノート", "ジュース", "パン", "おにぎり", "りんご", "ガム", "クッキー", "のり", "じょうぎ", "バナナ"];
+
+  // ====================== お金をかぞえる（①〜③） ======================
+  function countRow(it, idx, step, kinds) {
+    const tr = it.isRei ? "trace" : "blank";           // れいは ぜんぶ なぞり
+    const sum = total(it.c);
+    let body;
+    if (step === "step3" && !it.isRei) {
+      // ステップ3：まざった おかねを そのまま かぞえる
+      const r = rng(sum * 7 + idx);
+      body = `<div class="coin-area">${shuffled(r, coinsOf(it.c)).map(coin).join("")}</div>
+        <div class="q-line">ぜんぶで ${box(sum, "blank", "wide")} 円</div>`;
+    } else {
+      const ks = kinds.filter(v => it.c[v] > 0);
+      body = `<div class="rooms">${ks.map((v, i) => {
+        // ステップ1：いちばん大きい へやの まい数だけ なぞり（足がかり）
+        const m = it.isRei || (step === "step1" && i === 0) ? "trace" : "blank";
+        return `<div class="room"><div class="room-head">${v}円の へや</div>
+          <div class="coin-area" style="justify-content:center;">${Array(it.c[v]).fill(v).map(coin).join("")}</div>
+          <div class="room-foot"><span>${box(it.c[v], m, "sm")}まい</span><span>→ ${box(v * it.c[v], tr, "sm")}円</span></div></div>`;
+      }).join("")}</div>
+      <div class="q-line">ぜんぶで ${box(sum, tr, "wide")} 円</div>`;
+    }
+    return { body, ans: `${sum}円` };
+  }
+  function genCount(kinds, opt) {
+    return (r) => {
+      for (;;) {
+        const c = {};
+        kinds.forEach(v => { c[v] = ri(r, opt[v][0], opt[v][1]); });
+        const n = Object.values(c).reduce((a, b) => a + b, 0);
+        const used = Object.values(c).filter(x => x > 0).length;
+        if (n >= 3 && n <= opt.max && used >= opt.minKinds && used <= (opt.maxKinds || 9)) return { c };
+      }
+    };
+  }
+  const COUNT_UNITS = {
+    "okane-1": { kinds: [10, 1], rei: { c: { 10: 2, 1: 3 } }, opt: { 10: [1, 5], 1: [1, 7], max: 10, minKinds: 2 }, n: 4 },
+    "okane-2": { kinds: [100, 10, 1], rei: { c: { 100: 1, 10: 2, 1: 3 } }, opt: { 100: [1, 3], 10: [0, 4], 1: [0, 5], max: 10, minKinds: 3 }, n: 4 },
+    "okane-3": { kinds: [500, 100, 50, 10, 5, 1], rei: { c: { 500: 0, 100: 1, 50: 1, 10: 2, 5: 0, 1: 0 } },
+                 opt: { 500: [0, 1], 100: [0, 2], 50: [0, 1], 10: [0, 3], 5: [0, 1], 1: [0, 3], max: 8, minKinds: 3, maxKinds: 4 }, n: 3 }
+  };
+
+  // ====================== ちょうど はらう ======================
+  function genPay(r) {
+    return { item: pick(r, ITEMS), p: ri(r, 1, 3) * 100 + ri(r, 0, 9) * 10 + ri(r, 0, 9) };
+  }
+  function payRow(it, step) {
+    const h = Math.floor(it.p / 100), t = Math.floor(it.p / 10) % 10, o = it.p % 10;
+    const m = (k) => it.isRei || (step === "step1" && k === 0) ? "trace" : "blank";
+    const showPlace = it.isRei || step !== "step3";
+    const digit = (d) => (it.isRei || step === "step1") ? d : "";
+    const place = showPlace ? `<div class="place"><div>百</div><div>十</div><div>一</div>
+        <div class="d">${digit(h)}</div><div class="d">${digit(t)}</div><div class="d">${digit(o)}</div></div>` : "";
+    const body = `<div class="q-line"><span class="tag">${it.item} ${it.p}円</span> ${place}</div>
+      <div class="q-line">${coin(100)}${box(h, m(0), "sm")}まい　${coin(10)}${box(t, m(1), "sm")}まい　${coin(1)}${box(o, m(2), "sm")}まい</div>`;
+    return { body, ans: `100円${h}まい<br>10円${t}まい<br>1円${o}まい` };
+  }
+
+  // ====================== かいもの ======================
+  function genShop(r) {
+    const a = ri(r, 2, 25) * 10, b = ri(r, 2, 25) * 10;
+    if (a === b) return genShop(r);
+    const type = r() < 0.5 ? "sum" : "enough";
+    const s = a + b;
+    const have = type === "enough" ? (r() < 0.5 ? s + ri(r, 1, 8) * 10 : s - ri(r, 1, Math.min(8, s / 10 - 2)) * 10) : 0;
+    const i1 = pick(r, ITEMS); let i2 = pick(r, ITEMS); if (i2 === i1) i2 = ITEMS[(ITEMS.indexOf(i1) + 3) % ITEMS.length];
+    return { type, i1, a, i2, b, have };
+  }
+  function shopRow(it, step) {
+    const s = it.a + it.b, ok = it.have >= s;
+    const tr = it.isRei ? "trace" : "blank";
+    const ab = it.isRei || step === "step1" ? "trace" : "blank";
+    const formula = (it.isRei || step !== "step3")
+      ? `<div class="q-line"><span class="hint">しき</span> ${box(it.a, ab)} ＋ ${box(it.b, ab)} ＝ ${box(s, tr, "wide")} 円</div>`
+      : `<div class="q-line">あわせて ${box(s, "blank", "wide")} 円</div>`;
+    const tags = `<div class="q-line"><span class="tag">${it.i1} ${it.a}円</span>と<span class="tag">${it.i2} ${it.b}円</span>を かいます。</div>`;
+    if (it.type === "sum") return { body: tags + formula, ans: `${s}円` };
+    const choice = `<div class="q-line">${it.have}円 もっています。 <span class="choice"><span ${it.isRei && ok ? 'style="border:2.5px solid #18181b"' : ""}>かえる</span><span ${it.isRei && !ok ? 'style="border:2.5px solid #18181b"' : ""}>かえない</span></span> に ○</div>`;
+    return { body: tags + formula + choice, ans: `${s}円<br>${ok ? "かえる" : "かえない"}` };
+  }
+
+  // ====================== おつり ======================
+  function genChange(r) {
+    // ねだんと おつりが 同じ数（100円で50円・500円で250円）は 答えが 見えて しまうので 出さない
+    if (r() < 0.5) return { pay: 100, item: pick(r, ITEMS), p: pick(r, [10, 20, 30, 40, 60, 70, 80, 90]) };
+    let p; do { p = ri(r, 11, 49) * 10; } while (p === 250);
+    return { pay: 500, item: pick(r, ITEMS), p };
+  }
+  function changeRow(it, step) {
+    const ch = it.pay - it.p, tr = it.isRei ? "trace" : "blank";
+    const ab = it.isRei || step === "step1" ? "trace" : "blank";
+    const head = `<div class="q-line"><span class="tag">${it.item} ${it.p}円</span>を ${coin(it.pay)} ${it.pay}円で はらいます。</div>`;
+    const formula = (it.isRei || step !== "step3")
+      ? `<div class="q-line"><span class="hint">しき</span> ${box(it.pay, ab)} － ${box(it.p, ab)} ＝ ${box(ch, tr, "wide")} 円</div>`
+      : `<div class="q-line">おつりは ${box(ch, "blank", "wide")} 円</div>`;
+    return { body: head + formula, ans: `${ch}円` };
+  }
+
+  // ====================== カレンダー ======================
+  const WD = ["日", "月", "火", "水", "木", "金", "土"];
+  const WD_KANA = ["にち", "げつ", "か", "すい", "もく", "きん", "ど"];
+  function calMonth(seed) {
+    const r = rng(seed * 31 + 7);
+    return { y: 2026 + ri(r, 0, 1), m: ri(r, 1, 12) };
+  }
+  function calTable(y, m, marks, guideCols) {
+    const first = new Date(y, m - 1, 1).getDay(), days = new Date(y, m, 0).getDate();
+    let html = `<table class="cal"><caption>${y}ねん ${m}がつ</caption><tr>${WD.map((w, i) =>
+      `<th class="${i === 0 ? "sun" : i === 6 ? "sat" : ""} ${guideCols.has(i) ? "col-guide" : ""}"><ruby>${w}<rt>${WD_KANA[i]}</rt></ruby></th>`).join("")}</tr>`;
+    let d = 1 - first;
+    while (d <= days) {
+      html += "<tr>";
+      for (let i = 0; i < 7; i++, d++) {
+        if (d < 1 || d > days) { html += `<td class="${guideCols.has(i) ? "col-guide" : ""}"></td>`; continue; }
+        const mk = marks.get(d);
+        html += `<td class="${i === 0 ? "sun" : i === 6 ? "sat" : ""} ${mk ? "mark" : ""} ${guideCols.has(i) ? "col-guide" : ""}">${mk ? `<span class="qtag">${mk}</span>` : ""}${d}</td>`;
+      }
+      html += "</tr>";
+    }
+    return html + "</table>";
+  }
+  function buildCalendar(unit, step, seed) {
+    const { y, m } = calMonth(seed);
+    const days = new Date(y, m, 0).getDate();
+    const wd = (d) => new Date(y, m - 1, d).getDay();
+    const r = rng(seed * 101 + (unit === "cal-1" ? 1 : 2));
+    let list = [];
+    if (unit === "cal-1") {
+      const ds = shuffled(r, Array.from({ length: days }, (_, i) => i + 1)).slice(0, 6);
+      list = ds.map((d, i) => ({ d, isRei: i === 0 }));
+    } else {
+      const kinds = [["つぎの日", 1], ["まえの日", -1], ["1しゅうかん あと", 7], ["1しゅうかん まえ", -7], ["2日 あと", 2], ["つぎの日", 1]];
+      const used = new Set();
+      kinds.forEach(([label, k], i) => {
+        for (let g = 0; g < 100; g++) {
+          const d = ri(r, 1, days);
+          if (d + k < 1 || d + k > days || used.has(d)) continue;
+          used.add(d); list.push({ label, k, d, isRei: i === 0 }); break;
+        }
+      });
+    }
+    const marks = new Map(), guide = new Set();
+    list.forEach((it, i) => {
+      // ①はステップ1・2、②はステップ1だけ 日にちに○（②のステップ2は ヒントの式だけ）
+      const showMark = it.isRei || (unit === "cal-1" ? step !== "step3" : step === "step1");
+      if (showMark) marks.set(it.d, it.isRei ? "れい" : `(${i})`);
+      if (unit === "cal-1" && (it.isRei || step === "step1")) guide.add(wd(it.d)); // ①ステップ1：ようびの列に色
+    });
+    const rows = list.map((it, i) => {
+      const num = it.isRei ? '<span class="rei-badge">れい</span>' : `(${i})`;
+      let line, ans;
+      if (unit === "cal-1") {
+        const w = WD_KANA[wd(it.d)];
+        line = `${m}がつ ${it.d}にちは ${box(w, it.isRei ? "trace" : "blank", "wide")} ようび`;
+        ans = `${w}ようび`;
+      } else {
+        const a = it.d + it.k;
+        const hint = (it.isRei || step !== "step3") ? `<span class="hint">（${it.k > 0 ? "+" : "－"}${Math.abs(it.k)}日）</span>` : "";
+        line = `${it.d}にちの ${it.label}は ${box(a, it.isRei ? "trace" : "blank")} にち ${hint}`;
+        ans = `${a}にち`;
+      }
+      return `<div class="q-row"><div class="q-num">${num}</div><div class="q-body"><div class="q-line">${line}</div></div>${fold(ans)}</div>`;
+    }).join("");
+    return `<div class="cal-wrap">${calTable(y, m, marks, guide)}</div><div class="q-grid">${rows}</div>`;
+  }
+
+  // ====================== 組み立て ======================
+  function buildRows(unit, step, seed) {
+    const r = rng(seed * 1000 + UNITS.findIndex(u => u.id === unit) + 1);
+    let list, rowFn;
+    if (COUNT_UNITS[unit]) {
+      const U = COUNT_UNITS[unit];
+      list = makeList(U.rei, genCount(U.kinds, U.opt), U.n, r);
+      rowFn = (it, i) => countRow(it, i, step, U.kinds);
+    } else if (unit === "okane-4") {
+      list = makeList({ item: "ノート", p: 132 }, genPay, 5, r);
+      rowFn = (it) => payRow(it, step);
+    } else if (unit === "okane-5") {
+      list = makeList({ type: "enough", i1: "パン", a: 120, i2: "ジュース", b: 90, have: 250 }, genShop, 4, r);
+      rowFn = (it) => shopRow(it, step);
+    } else if (unit === "okane-6") {
+      list = makeList({ pay: 100, item: "ガム", p: 70 }, genChange, 5, r);
+      rowFn = (it) => changeRow(it, step);
+    }
+    return `<div class="q-grid">${list.map((it, i) => {
+      const { body, ans } = rowFn(it, i);
+      return `<div class="q-row"><div class="q-num">${it.isRei ? '<span class="rei-badge">れい</span>' : `(${i})`}</div><div class="q-body">${body}</div>${fold(ans)}</div>`;
+    }).join("")}</div>`;
+  }
+
+  function render() {
+    const u = UNITS.find(x => x.id === state.unit) || UNITS[0];
+    state.unit = u.id;
+    const inner = u.cat === "カレンダー" ? buildCalendar(u.id, state.step, state.seed) : buildRows(u.id, state.step, state.seed);
+    document.getElementById("sheetContainer").innerHTML = `
+      <div class="print-sheet">
+        <div class="sheet-header">
+          <div class="sheet-title-box">
+            <div class="sheet-unit-kicker">くらし（${u.cat}）・${u.no}</div>
+            <h1 class="sheet-title">${u.title}</h1>
+            <span class="sheet-level-badge">${STEP_NAME[state.step]}</span>
+          </div>
+          <div class="sheet-meta"><div class="meta-box">　月　　日</div><div class="meta-box name-box">なまえ：</div></div>
+        </div>
+        <div class="sheet-lead">${u.lead}</div>
+        ${inner}
+        <div class="sheet-footer">
+          <span>© すっきりプリント（くらし）　No.${state.seed}</span>
+          <span>${state.fold ? "右はしを山折りにすると、こたえを かくせます。" : ""}おかねの 絵は 本物の 図柄では ありません。</span>
+        </div>
+      </div>`;
+    document.querySelectorAll(".level-tab").forEach(t => t.classList.toggle("active", t.id === `tab-${state.step}`));
+    document.querySelectorAll(".unit-btn").forEach(b => b.classList.toggle("active", b.dataset.unit === state.unit));
+    document.body.classList.toggle("no-fold", !state.fold);
+    document.getElementById("foldBtn").textContent = `こたえ欄：${state.fold ? "あり" : "なし"}`;
+    document.title = `【くらし】${u.title}_${STEP_NAME[state.step].split("：")[0]}`;
+    updateURL();
+  }
+
+  function buildUnitList() {
+    document.getElementById("unitCountLabel").textContent = `全 ${UNITS.length} 単元`;
+    const cats = [...new Set(UNITS.map(u => u.cat))];
+    document.getElementById("unitList").innerHTML = cats.map(c => `
+      <div><div class="cat-group-title">${c}</div>
+        ${UNITS.filter(u => u.cat === c).map(u => `
+          <a class="unit-btn" data-unit="${u.id}" href="?u=${u.id}&amp;s=step1" onclick="selectUnit('${u.id}'); return false;">
+            <span class="unit-no-tag">${u.no}</span>
+            <div><div class="unit-name">${u.title}</div><div class="unit-sub">${u.sub}</div></div>
+          </a>`).join("")}
+      </div>`).join("");
+  }
+
+  function selectUnit(id) { state.unit = id; render(); closeDrawer(); window.scrollTo(0, 0); }
+  function setStep(s) { state.step = s; render(); }
+  function shuffle() { state.seed += 1; render(); }
+  function toggleFold() { state.fold = !state.fold; render(); }
+  function openDrawer() { document.body.classList.add("drawer-open"); }
+  function closeDrawer() { document.body.classList.remove("drawer-open"); }
+
+  function updateURL() {
+    const url = new URL(location.href);
+    url.searchParams.set("u", state.unit);
+    url.searchParams.set("s", state.step);
+    if (state.seed !== 1) url.searchParams.set("seed", state.seed); else url.searchParams.delete("seed");
+    if (!state.fold) url.searchParams.set("fold", "0"); else url.searchParams.delete("fold");
+    history.replaceState({}, "", url);
+  }
+  function copyUnitLink() {
+    updateURL();
+    (navigator.clipboard ? navigator.clipboard.writeText(location.href) : Promise.reject()).then(
+      () => showToast("URLをコピーしました（同じ数字で開けます）"),
+      () => showToast("コピーできませんでした。アドレス欄のURLを長押ししてコピーしてください"));
+  }
+  function showToast(msg) {
+    const t = document.getElementById("toastBox");
+    t.textContent = msg; t.style.display = "block";
+    setTimeout(() => { t.style.display = "none"; }, 2600);
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const p = new URLSearchParams(location.search);
+    if (UNITS.some(u => u.id === p.get("u"))) state.unit = p.get("u");
+    if (["step1", "step2", "step3"].includes(p.get("s"))) state.step = p.get("s");
+    const sd = parseInt(p.get("seed"), 10);
+    if (Number.isInteger(sd) && sd > 0 && sd < 1000000) state.seed = sd;
+    if (p.get("fold") === "0") state.fold = false;
+    buildUnitList();
+    render();
+  });
+  </script>
+  <script src="../kokugo/mobile-fit.js"></script>
+</body>
+</html>
