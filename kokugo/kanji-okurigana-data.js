@@ -89,20 +89,20 @@ const OKURIGANA_UNITS = [
         ans: "消す"
       },
       {
-        q: "スープが すっかり ［　　］。",
-        kanji: "冷",
-        okuri: "める",
-        yomi: "さめる",
+        q: "この 道は 右に ［　　］。",
+        kanji: "曲",
+        okuri: "がる",
+        yomi: "まがる",
         pair_label: "ペア⑤ 自然になる",
-        ans: "冷める"
+        ans: "曲がる"
       },
       {
-        q: "すいかを 水で ［　　］。",
-        kanji: "冷",
-        okuri: "やす",
-        yomi: "ひやす",
+        q: "はりがねを 手で ［　　］。",
+        kanji: "曲",
+        okuri: "げる",
+        yomi: "まげる",
         pair_label: "ペア⑤ 人がする",
-        ans: "冷やす"
+        ans: "曲げる"
       }
     ]
   },
@@ -271,18 +271,18 @@ const OKURIGANA_UNITS = [
         ans: "［走］る"
       },
       {
-        q: "じしゃくの 力を ［　］（　）。",
-        kanji: "試",
+        q: "かりた 本を 図書館に ［　］（　）。",
+        kanji: "返",
         okuri: "す",
-        yomi: "ためす",
-        ans: "［試］す"
+        yomi: "かえす",
+        ans: "［返］す"
       },
       {
-        q: "友だちを えがおで ［　］（　）。",
-        kanji: "迎",
-        okuri: "える",
-        yomi: "むかえる",
-        ans: "［迎］える"
+        q: "みんなに プリントを ［　］（　）。",
+        kanji: "配",
+        okuri: "る",
+        yomi: "くばる",
+        ans: "［配］る"
       }
     ]
   },
