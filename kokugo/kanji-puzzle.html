@@ -141,6 +141,7 @@
 
     /* ====== 印刷スタイル ====== */
     @media print {
+      @page { size: A4 portrait; margin: 0; }
       body { background: #fff; display: block; }
       .sidebar, .top-toolbar { display: none !important; }
       .main-wrap { margin-left: 0; }
