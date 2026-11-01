@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>すっきりプリント かんじ がったいパズル（部首・パーツ）</title>
+  <title>すっきりプリント かんじ がったいパズル（部首・パーツ）｜無料の漢字プリント</title>
+  <meta name="description" content="かんじ がったいパズル（部首・パーツ）の無料プリント。小1〜小6の配当漢字に対応、3ステップで少しずつ。登録不要・印刷するだけ。" />
+  <link rel="canonical" href="https://edu-drill.com/kokugo/kanji-puzzle.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="すっきりプリント" />
+  <meta property="og:title" content="すっきりプリント かんじ がったいパズル（部首・パーツ）｜無料の漢字プリント" />
+  <meta property="og:description" content="かんじ がったいパズル（部首・パーツ）の無料プリント。小1〜小6の配当漢字に対応、3ステップで少しずつ。登録不要・印刷するだけ。" />
+  <meta property="og:url" content="https://edu-drill.com/kokugo/kanji-puzzle.html" />
+  <meta name="twitter:card" content="summary" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
@@ -144,7 +152,7 @@
       .puzzle-row { page-break-inside: avoid; }
     }
 
-    @media (max-width: 900px) {
+    @media screen and (max-width: 900px) {
       .sidebar { transform: translateX(-100%); transition: transform 0.2s; }
       body.drawer-open .sidebar { transform: translateX(0); }
       .main-wrap { margin-left: 0; }
@@ -316,7 +324,7 @@
 
     function copyUnitLink() {
       const url = `${location.origin}${location.pathname}?u=${state.unit}&s=${state.step}`;
-      navigator.clipboard.writeText(url).then(() => { alert("URLをコピーしました"); });
+      (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => { alert("URLをコピーしました"); }, () => { prompt("コピーできませんでした。このURLを長押ししてコピーしてください", url); });
     }
 
     window.addEventListener("DOMContentLoaded", () => {

@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>すっきりプリント（算数）</title>
+  <title>すっきりプリント 算数｜小1〜小6 全単元の無料プリント（3ステップ）</title>
+  <meta name="description" content="時計・くり上がり・筆算・九九・分数など小1〜小6の算数全単元。なぞり→補助つき→自力の3ステップと、数字を変えて何枚でも作れる無料プリント。こたえつき。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="すっきりプリント" />
+  <meta property="og:title" content="すっきりプリント 算数｜小1〜小6 全単元の無料プリント（3ステップ）" />
+  <meta property="og:description" content="時計・くり上がり・筆算・九九・分数など小1〜小6の算数全単元。なぞり→補助つき→自力の3ステップと、数字を変えて何枚でも作れる無料プリント。こたえつき。" />
+  <meta property="og:url" content="https://edu-drill.com/sansu/" />
+  <meta name="twitter:card" content="summary" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
@@ -155,6 +162,9 @@
     }
 
     .unit-btn {
+      box-sizing: border-box;
+      text-decoration: none;
+      color: inherit;
       width: 100%;
       text-align: left;
       background: transparent;
@@ -1517,12 +1527,27 @@
       if (st && ["step1", "step2", "step3", "all"].includes(st)) {
         state.level = st;
       }
+      // 「数字を変える」の結果・印刷するもの・枚数も共有URLで再現する
+      const sd = parseInt(params.get("seed"), 10);
+      if (Number.isInteger(sd) && sd > 0 && sd < 1000000) state.baseSeed = sd;
+      const am = params.get("ans");
+      if (am && ["both", "problems", "answers"].includes(am)) {
+        state.answerMode = am;
+        document.getElementById("answerMode").value = am;
+      }
+      const pg = params.get("pages");
+      if (pg && ["1", "5", "10"].includes(pg)) document.getElementById("pageCount").value = pg;
     }
 
     function updateURLParams() {
       const url = new URL(window.location.href);
       url.searchParams.set("unit", state.unit);
       url.searchParams.set("step", state.level);
+      const setOrDel = (k, v, def) => (v === def ? url.searchParams.delete(k) : url.searchParams.set(k, v));
+      setOrDel("seed", String(state.baseSeed), "1");
+      setOrDel("ans", state.answerMode, "both");
+      const pc = document.getElementById("pageCount");
+      setOrDel("pages", pc ? pc.value : "1", "1");
       window.history.replaceState({}, "", url);
     }
 
@@ -1544,10 +1569,10 @@
           <div>
             <div class="cat-group-title">${cat.category}</div>
             ${filtered.map(item => `
-              <button class="unit-btn ${state.unit === item.id ? 'active' : ''}" onclick="selectUnit('${item.id}')">
+              <a class="unit-btn ${state.unit === item.id ? 'active' : ''}" href="?unit=${item.id}&amp;step=step1" onclick="selectUnit('${item.id}'); return false;">
                 <span class="unit-grade-tag">${item.badge}</span>
                 <span class="unit-name">${item.name}</span>
-              </button>
+              </a>
             `).join("")}
           </div>
         `;
@@ -1638,8 +1663,10 @@
 
     function copyUnitLink() {
       updateURLParams();
-      navigator.clipboard.writeText(window.location.href);
-      showToast("この単元のURLをコピーしました");
+      const href = window.location.href;
+      (navigator.clipboard ? navigator.clipboard.writeText(href) : Promise.reject())
+        .then(() => showToast("この単元のURLをコピーしました（数字・印刷設定もそのまま開けます）"),
+              () => { showToast("コピーできませんでした。アドレス欄のURLを長押ししてコピーしてください"); });
     }
 
     function showToast(msg) {
@@ -2952,9 +2979,9 @@
           { denom: 4, shape: 'bar' },
           { denom: 8, shape: 'circle' },
           { denom: 2, shape: 'bar' },
-          { denom: 8, shape: 'bar' },
-          { denom: 4, shape: 'circle' }
+          { denom: 8, shape: 'bar' }
         ];
+        // れい（4等分の円）と同じ問題が出ないよう、れいの組み合わせは候補に入れない
         const list = [{ denom: 4, shape: 'circle', isRei: true }];
         for (let i = 1; i <= 5; i++) {
           list.push({ ...combos[(s + i - 1) % combos.length], isRei: false });
@@ -3136,6 +3163,14 @@
           { l: 1, dl: ((s + 6) % 6) + 3, isRei: false }
         ];
         if (list[1].l === list[3].l && list[1].dl === list[3].dl) list[3].dl = (list[3].dl % 8) + 1;
+        // れい（1L4dL）と同じ問題を出さない
+        for (const i of [1, 3]) {
+          if (list[i].l === 1 && list[i].dl === 4) {
+            list[i].dl = 6;
+            const o = list[4 - i];
+            if (o.l === 1 && o.dl === 6) list[i].dl = 7;
+          }
+        }
         const itemsHtml = list.map((it, idx) => {
           const totalDl = it.l * 10 + it.dl;
           const traceL = it.isRei || level === 'step1';
@@ -3611,13 +3646,14 @@
       if (unit === 'div_zero') {
         const title = '0の わり算（0や 1で わる）';
         const nums = [2, 3, 4, 5, 6, 7, 8, 9];
+        const nums0 = [2, 4, 5, 6, 7, 8, 9]; // 0を わる数（れいの 0÷3 と重ならないよう 3を除く）
         const n1 = nums[(s + 1) % nums.length];
-        const n2 = nums[(s + 2) % nums.length];
+        const n2 = nums0[(s + 2) % nums0.length];
         const n3 = nums[(s + 3) % nums.length];
         const n4 = nums[(s + 4) % nums.length];
-        const n5 = nums[(s + 5) % nums.length];
+        const n5 = nums0[(s + 5) % nums0.length];
         const n6 = nums[(s + 6) % nums.length];
-        const n7 = nums[(s + 7) % nums.length];
+        const n7 = nums0[(s + 7) % nums0.length];
         const list = [
           { a: 0, b: 3, ans: 0, rule: '0を わると 0', isRei: true },
           { a: n1, b: 1, ans: n1, rule: '1で わると そのまま', isRei: false },
@@ -4711,14 +4747,14 @@
           { q: '1分 ＝', ans: 60, unit: '秒', hint: '1分＝60秒', isRei: true },
           { q: '1分 20秒 ＝', ans: 80, unit: '秒', hint: '60＋20', isRei: false },
           { q: '90秒 ＝', ansMin: 1, ansSec: 30, isSplit: true, hint: '60秒＋30秒', isRei: false },
-          { q: '40秒 ＋ 30秒 ＝', ansMin: 1, ansSec: 10, isSplit: true, hint: '70秒＝1分10秒', isRei: false },
+          { q: '40秒 ＋ 30秒 ＝', ansMin: 1, ansSec: 10, isSplit: true, hint: '70秒＝60秒＋10秒', isRei: false },
           { q: '2分 ＝', ans: 120, unit: '秒', hint: '60×2', isRei: false }
         ];
         if (s !== 0) {
           const cand = [
             { q: '1分 40秒 ＝', ans: 100, unit: '秒', hint: '60＋40' },
             { q: '80秒 ＝', ansMin: 1, ansSec: 20, isSplit: true, hint: '60秒＋20秒' },
-            { q: '50秒 ＋ 20秒 ＝', ansMin: 1, ansSec: 10, isSplit: true, hint: '70秒＝1分10秒' },
+            { q: '50秒 ＋ 20秒 ＝', ansMin: 1, ansSec: 10, isSplit: true, hint: '70秒＝60秒＋10秒' },
             { q: '100秒 ＝', ansMin: 1, ansSec: 40, isSplit: true, hint: '60秒＋40秒' },
             { q: '1分 15秒 ＝', ans: 75, unit: '秒', hint: '60＋15' },
             { q: '3分 ＝', ans: 180, unit: '秒', hint: '60×3' }
@@ -5639,7 +5675,7 @@
         const cand = [
           { dvd: 63, dvr: 21, q: 3 }, { dvd: 84, dvr: 42, q: 2 },
           { dvd: 96, dvr: 32, q: 3 }, { dvd: 88, dvr: 22, q: 4 },
-          { dvd: 68, dvr: 34, q: 2 }, { dvd: 93, dvr: 31, q: 3 }, { dvd: 84, dvr: 21, q: 4 }
+          { dvd: 68, dvr: 34, q: 2 }, { dvd: 93, dvr: 31, q: 3 }, { dvd: 44, dvr: 11, q: 4 }
         ];
         const list = [{ dvd: 84, dvr: 21, q: 4, isRei: true }];
         for (let i = 1; i <= 3; i++) {
@@ -5668,7 +5704,7 @@
                 </table>
                 ${showEst ? `
                   <div style="font-size:0.8rem; color:#52525b; font-weight:700; line-height:1.5;">
-                    見当：<br/>${dvdT * 10} ÷ ${dvrT * 10} ＝ ${it.q}
+                    見当：<br/>${dvdT * 10} ÷ ${dvrT * 10} ＝ <span class="box sm" style="height:24px; min-width:30px; font-size:0.86rem;">${cellVal(it.q, it.isRei)}</span>
                   </div>
                 ` : ''}
               </div>
@@ -8265,7 +8301,7 @@ function addG6Units(unit, level, s, pageLabel) {
           <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
             <div>
               <div style="font-weight:700;">${it.type}</div>
-              ${showHint ? `<div style="font-size:0.8rem; color:#52525b;">${it.hint}</div>` : ''}
+              ${showHint ? `<div style="font-size:0.8rem; color:#52525b;">${it.isRei ? it.hint : it.hint.replace(/\s*＝.*$/, ' ＝ ？')}</div>` : ''}
             </div>
             <div class="eq-row" style="font-size:1.15rem;">
               <span>計算のあしがかり：<span class="box sm">${cellVal(it.part, tracePart)}</span></span>
