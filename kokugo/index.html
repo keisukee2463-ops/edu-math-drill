@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>すっきりプリント（国語）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "BIZ UDPGothic", sans-serif; background: #f5f4f0; color: #1c1917; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 40px 16px; }
+    .back { align-self: flex-start; max-width: 640px; width: 100%; margin: 0 auto 20px; }
+    .back a { font-size: 0.78rem; color: #57534e; text-decoration: none; font-weight: 700; }
+    .kicker { font-size: 0.75rem; color: #b45309; font-weight: 700; letter-spacing: 0.1em; }
+    h1 { font-size: 1.5rem; margin: 6px 0 24px; letter-spacing: 0.04em; }
+    .list { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; width: 100%; max-width: 640px; }
+    .list a { display: block; text-decoration: none; color: inherit; background: #fff; border: 1px solid #e7e5e4;
+      border-radius: 12px; padding: 16px; transition: transform .15s, box-shadow .15s; }
+    .list a:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.08); }
+    .list .name { font-size: 1.05rem; font-weight: 700; color: #b91c1c; margin-bottom: 4px; }
+    .list p { font-size: 0.75rem; color: #57534e; line-height: 1.5; }
+    footer { margin-top: 32px; font-size: 0.7rem; color: #a8a29e; text-align: center; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="back"><a href="../">← すっきりプリント トップ</a></div>
+  <div class="kicker">SMALL-STEP WORKSHEETS</div>
+  <h1>すっきりプリント こくご</h1>
+  <div class="list">
+    <a href="kanji-yomi.html"><div class="name">かんじ よみ</div><p>漢字の読みがなを書く</p></a>
+    <a href="kanji-kaki.html"><div class="name">かんじ かき</div><p>単語で漢字を書く</p></a>
+    <a href="kanji-bun.html"><div class="name">たんぶん かんじ</div><p>短文の中で漢字を書く</p></a>
+    <a href="kanji-diff.html"><div class="name">にたかんじ えらび</div><p>形や読みが似た漢字を見分ける</p></a>
+    <a href="kanji-okurigana.html"><div class="name">おくりがな</div><p>送りがなを正しく書く</p></a>
+    <a href="kanji-puzzle.html"><div class="name">がったいパズル</div><p>部首・パーツを組み合わせる</p></a>
+  </div>
+  <footer>学校・家庭・放課後等デイサービスで、自由に印刷してお使いください（無料・登録不要）。<br>再配布・販売はご遠慮ください。</footer>
+</body>
+</html>
