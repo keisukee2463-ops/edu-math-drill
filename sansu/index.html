@@ -398,14 +398,24 @@
       display: flex;
       align-items: baseline;
       gap: 10px;
+      flex: 1;
+      min-width: 0;
     }
 
+    /* 単元名は かならず1行（入りきらないときは 文字を少し小さくする：fitSheetTitles） */
     .sheet-title {
       font-size: 1.25rem;
       font-weight: 700;
       letter-spacing: 0.05em;
       color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      min-width: 0;
     }
+    .sheet-step-badge, .sheet-ans-badge, .sheet-page-num, .name-line { white-space: nowrap; flex-shrink: 0; }
+    .sheet-header { flex-wrap: wrap; row-gap: 4px; }
+    .sheet-header.title-long .sheet-title-wrap { flex-basis: 100%; }
+    .sheet-header.title-long .name-line { margin-left: auto; }
 
     .sheet-step-badge {
       display: inline-block;
@@ -446,7 +456,7 @@
     .name-line {
       font-size: 0.94rem;
       border-bottom: 1px solid var(--ink);
-      width: 195px;
+      min-width: 195px;
       padding-bottom: 3px;
       color: var(--ink);
       letter-spacing: 0.05em;
@@ -8402,6 +8412,33 @@ function wrapSheet(title, pageLabel, gridClass, itemsHtml) {
     }
     window.addEventListener('resize', fitSheetsToScreen);
 
+    // 単元名は1行にする。なまえ欄と並べて入りきらないときは、なまえ欄を下の行に回して
+    // 単元名に1行ぜんぶを使う。それでも入らないときだけ文字を少し小さくする（最小 0.85rem）
+    function fitSheetTitles() {
+      const shrink = (t, min) => {
+        let size = 1.25;
+        t.style.fontSize = ""; t.style.letterSpacing = "";
+        while (t.scrollWidth > t.clientWidth + 1 && size > min) {
+          size -= 0.05;
+          t.style.fontSize = size.toFixed(2) + "rem";
+          if (size < 1.05) t.style.letterSpacing = "0";
+        }
+        return size;
+      };
+      document.querySelectorAll(".sheet-title").forEach(t => {
+        const hdr = t.closest(".sheet-header");
+        if (hdr) hdr.classList.remove("title-long");
+        const size = shrink(t, 0.95);
+        if (hdr && (t.scrollWidth > t.clientWidth + 1 || size < 1.05)) {
+          hdr.classList.add("title-long");
+          shrink(t, 0.85);
+        }
+      });
+    }
+    const renderOriginal = render;
+    render = function () { renderOriginal.apply(this, arguments); fitSheetTitles(); };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSheetTitles);
+    window.addEventListener("beforeprint", fitSheetTitles);
     initFromURL();
     renderSidebar();
     setStep(state.level);
